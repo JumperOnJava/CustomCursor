@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -18,65 +19,57 @@ import java.util.function.Consumer;
  */
 public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWidget.ScrollListEntry> {
     public ScrollListWidget(MinecraftClient client, int width, int height, int x, int y, int itemHeight) {
+        //? if < 1.21 {
         super(client,width,height,y,height,itemHeight);
+        //?} else {
+        /*super(client,width,height,y,itemHeight);
+        *///?}
+
+        //? if < 1.21
         setLeftPos(x);
-        //setRenderBackground(false);
-        //setRenderHeader(false,0);
     }
     @Override
     public int getRowWidth() {
         return this.width;
     }
     public int addEntry(ScrollListEntry entry){
-        entry.activationConsumer = this::setSelectedEntry;
-        entry.isHoveredFunction = this::isMouseOver;
         return super.addEntry(entry);
     }
+    //? if < 1.21 {
     @Override
     protected int getScrollbarPositionX() {
         return width-6;
     }
+    //?}
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return super.mouseClicked(mouseX, mouseY, button);
     }
-    private ScrollListEntry selectedEntry=new ScrollListEntry();
-    public void setSelectedEntry(ScrollListEntry listEntry) {
-        selectedEntry.setSelected(false);
-        listEntry.setSelected(true);
-        selectedEntry=listEntry;
-    }
 
+    //? if < 1.21 {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         context.enableScissor(left,top,left+width,top+height-1);
         super.render(context, mouseX, mouseY, delta);
         context.disableScissor();
     }
+    //?} else {
+    /*@Override
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        context.enableScissor(getX(),getY(),getX()+width,getBottom());
+        super.renderWidget(context, mouseX, mouseY, delta);
+        context.disableScissor();
+    }
+    *///?}
 
-    /**
-     * Scroll list entry. Out of box does nothing but using addDrawableChild method you can add widgets for custom behaviour.
-     */
+
     public static class ScrollListEntry extends Entry<ScrollListEntry> {
-        private final List<Drawable> drawables = Lists.newArrayList();
-        private final List<Element> children = Lists.newArrayList();
-        private boolean isSelected = false;
-        private Consumer<ScrollListEntry> activationConsumer;
-        private BiFunction<Integer,Integer,Boolean> isHoveredFunction;
-        private List<Element> deactivate = Lists.newArrayList();
+        private final Identifier key;
+        private final Runnable event;
 
-        @Override
-        public Text getNarration() {
-            return Text.empty();
-        }
-        int currentX, currentY;
-        private void setSelected(boolean selected) {
-            this.isSelected = selected;
-            for (var d : deactivate) {
-                if (d instanceof PressableWidget pw) {
-                    pw.active = !isSelected;
-                }
-            }
+        public ScrollListEntry(Identifier key, Runnable onClick) {
+            this.key = key;
+            this.event = onClick;
         }
         @Override
         public void render(DrawContext context,
@@ -87,54 +80,23 @@ public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWi
                            int mouseX, int mouseY,
                            boolean hovered,
                            float delta) {
-            for (var d : drawables) {
-                context.getMatrices().push();
-                context.getMatrices().translate(x, y, 0);
-                if(!isHoveredFunction.apply(mouseX,mouseY)){
-                    mouseX+=100000;
-                    mouseY+=100000;
-                }
-                d.render(context, mouseX - x, mouseY - y, delta);
-                currentX = x;
-                currentY = y;
-                context.getMatrices().pop();
-            }
+            new TextureWidget(key,x,y,entryHeight,entryHeight).render(context, mouseX, mouseY, delta);
+            context.drawText(MinecraftClient.getInstance().textRenderer,key.toString(),x+entryHeight+5,y+entryHeight/2-5,0xFFFFFFFF,true);
+        }
+
+        @Override
+        public Text getNarration() {
+            return Text.literal(key.toString());
         }
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY))
-                return false;
-            for (var c : children) {
-                c.mouseClicked(mouseX - currentX, mouseY - currentY, button);
+            var b = super.mouseClicked(mouseX, mouseY, button);
+            if(isMouseOver(mouseX, mouseY)){
+                event.run();
+                return true;
             }
-            return false;
-        }
-
-        @Override
-        public boolean isMouseOver(double mouseX, double mouseY) {
-            return super.isMouseOver(mouseX, mouseY) && isHoveredFunction.apply((int) mouseX, (int) mouseY);
-        }
-
-        /**
-         * adds widget element to this entry.
-         * @param drawableElement
-         * @param deactivateOnSelect should be this element deactivated when selected. Works only when widget is instance of PressableWidget
-         * @return
-         * @param <T>
-         */
-        public <T extends Element & Drawable> T addDrawableChild(T drawableElement, boolean deactivateOnSelect) {
-            this.drawables.add(drawableElement);
-            this.children.add(drawableElement);
-            if (deactivateOnSelect)
-                this.deactivate.add(drawableElement);
-            return drawableElement;
-        }
-
-        public void setMeActive() {
-            if (activationConsumer == null)
-                return;
-            activationConsumer.accept(this);
+            else return b;
         }
     }
 }

@@ -1,6 +1,7 @@
 package io.github.jumperonjava.customcursor.util;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.option.LanguageOptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
@@ -28,7 +29,6 @@ public abstract class TextureListAsk extends AskScreen<Identifier> {
             textures.addAll(resources.keySet().stream().toList());
         }
     }*/
-
     protected Identifier EMPTY_TEXTURE = Identifier.of("minecraft","empty");
     private Identifier selectedTexture = EMPTY_TEXTURE;
     public static final int gap = 2;
@@ -41,7 +41,7 @@ public abstract class TextureListAsk extends AskScreen<Identifier> {
     private TextureWidget selectedTextureWidget;
     @Override
     protected void init() {
-        list = new ScrollListWidget(client,width,height-22*2,0,22,40);
+        list = new ScrollListWidget(client,width,height - 64,0,22,40);
         refreshListByFilter("");
         addDrawableChild(list);
 
@@ -79,16 +79,10 @@ public abstract class TextureListAsk extends AskScreen<Identifier> {
             var id = key.toString();
             if(!id.toLowerCase().contains(s.toLowerCase()))
                 continue;
-            var button = new ButtonWidget.Builder(Text.literal(id),b->{
-                this.selectedTexture = Identifier.tryParse(b.getMessage().getString());
+            var entry = new ScrollListWidget.ScrollListEntry(key, ()-> {
+                this.selectedTexture = key;
                 selectedTextureWidget.setTexture(selectedTexture);
-            })
-                    .position(40,10)
-                    .size(width-40-6-gap,20)
-                    .build();
-            var entry = new ScrollListWidget.ScrollListEntry();
-            entry.addDrawableChild(button,true);
-            entry.addDrawableChild(new TextureWidget(key,0,0,40,40),false);
+            });
             list.addEntry(entry);
         }
     }

@@ -101,12 +101,12 @@ public class CursorEditScreen extends Screen {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         int heightOffset = (int) (24*2.75   );
-        super.render(context, mouseX, mouseY, delta);
         //? if <= 1.20.1 {
         renderBackground(context);
         //?} else {
         /*renderBackground(context,mouseX,mouseY,delta);
         *///?}
+        super.render(context, mouseX, mouseY, delta);
         var vec = new Vec2f(mouseX-width/2,mouseY-height/2).normalize().multiply(delta);
         bgx += vec.x;
         bgy += vec.y;

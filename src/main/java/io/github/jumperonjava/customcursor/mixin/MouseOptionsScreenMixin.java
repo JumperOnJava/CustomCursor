@@ -6,6 +6,9 @@ import io.github.jumperonjava.customcursor.CustomCursorInit;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
+import net.minecraft.client.gui.screen.option.GameOptionsScreen;
+import net.minecraft.client.gui.screen.option.KeybindsScreen;
+import net.minecraft.client.gui.screen.option.MouseOptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,12 +20,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ControlsOptionsScreen.class)
-public class MouseOptionsScreenMixin extends Screen {
+public abstract class MouseOptionsScreenMixin extends GameOptionsScreen {
 
-    protected MouseOptionsScreenMixin(Text title) {
-        super(title);
+    protected MouseOptionsScreenMixin() {
+        super(null,null,null);
     }
 
+    //? if < 1.21 {
     @Inject(method = "init",at = @At("HEAD"),locals = LocalCapture.CAPTURE_FAILHARD)
     void inject(CallbackInfo ci){
         int k = this.height / 6 - 12 + 24 * 3;
@@ -52,4 +56,24 @@ public class MouseOptionsScreenMixin extends Screen {
     int injected(int k){
         return k+24;
     }
+    //?} else {
+        /*@Inject(method = "addOptions", at = @At("TAIL"))
+        public void addOptions(CallbackInfo ci) {
+            this.body.addWidgetEntry
+                    (ButtonWidget.builder
+                            (Text.translatable("customcursor.openbutton"),
+                                    (buttonWidget) -> client.setScreen(new CursorEditScreen(this, CustomCursorInit.getConfig().pointer, c -> {
+                                        var cfg = new CursorConfigStorage();
+                                        cfg.pointer = c;
+                                        CustomCursorInit.setConfig(cfg);
+                                    }))).build(),(ButtonWidget.builder
+                            (Text.translatable("customcursor.openbutton"),
+                                    (buttonWidget) -> client.setScreen(new CursorEditScreen(this, CustomCursorInit.getConfig().pointer, c -> {
+                                        var cfg = new CursorConfigStorage();
+                                        cfg.pointer = c;
+                                        CustomCursorInit.setConfig(cfg);
+                                    }))).dimensions(0,0,0,0).build()));
+        }
+    //>}
 }
+*/
