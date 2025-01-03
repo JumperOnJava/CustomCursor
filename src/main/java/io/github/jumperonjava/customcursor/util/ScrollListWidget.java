@@ -18,7 +18,10 @@ import java.util.function.Consumer;
  */
 public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWidget.ScrollListEntry> {
     public ScrollListWidget(MinecraftClient client, int width, int height, int x, int y, int itemHeight) {
-        super(client,width,height,y,itemHeight);
+        super(client,width,height,y,height,itemHeight);
+        setLeftPos(x);
+        //setRenderBackground(false);
+        //setRenderHeader(false,0);
     }
     @Override
     public int getRowWidth() {
@@ -42,6 +45,13 @@ public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWi
         selectedEntry.setSelected(false);
         listEntry.setSelected(true);
         selectedEntry=listEntry;
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        context.enableScissor(left,top,left+width,top+height-1);
+        super.render(context, mouseX, mouseY, delta);
+        context.disableScissor();
     }
 
     /**

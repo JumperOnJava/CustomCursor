@@ -102,7 +102,11 @@ public class CursorEditScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         int heightOffset = (int) (24*2.75   );
         super.render(context, mouseX, mouseY, delta);
-        //renderBackground(context,mouseX,mouseY,delta);
+        //? if <= 1.20.1 {
+        renderBackground(context);
+        //?} else {
+        /*renderBackground(context,mouseX,mouseY,delta);
+        *///?}
         var vec = new Vec2f(mouseX-width/2,mouseY-height/2).normalize().multiply(delta);
         bgx += vec.x;
         bgy += vec.y;
@@ -131,11 +135,6 @@ public class CursorEditScreen extends Screen {
         }
 
         context.drawTexture(Identifier.of("customcursor","textures/gui/pointer.png"), (int) (width/2-64+this.targetConfig.x*128)-4, (int) (height/2-64+this.targetConfig.y*128)+heightOffset-4,0,0,8,8, 8,8);
-    }
-
-    @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderBackground(context, mouseX, mouseY, delta);
     }
 
     private void renderCheckerboard(DrawContext context, float delta, int color1, int color2) {

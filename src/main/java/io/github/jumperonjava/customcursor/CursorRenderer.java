@@ -1,6 +1,7 @@
 package io.github.jumperonjava.customcursor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
@@ -9,21 +10,30 @@ import org.lwjgl.opengl.GL11;
 import static io.github.jumperonjava.customcursor.CustomCursorInit.client;
 
 public class CursorRenderer {
-    public static void render(DrawContext context, int mouseX, int mouseY, float delta){
+    public static void render(DrawContext context, int mouseX, int mouseY, float delta) {
         var config = CustomCursorInit.getConfig().pointer;
-        if(config.enabled){
+        if (MinecraftClient.getInstance().currentScreen == null)
+            return;;
+        if (config.enabled) {
             var scale = client.getWindow().getScaleFactor();
             RenderSystem.depthFunc(GL11.GL_ALWAYS);
-            context.drawTexture(config.identifier, (int) Math.round(mouseX-config.size*config.x/scale), (int) Math.round(mouseY-config.size*config.y/scale), (float) 0, (float) 0, (int) (config.size/scale), (int) (config.size/scale), (int) (config.size/scale), (int) (config.size/scale));
+            context.drawTexture
+                    (config.identifier,
+                            (int) Math.round(mouseX - config.size * config.x / scale),
+                            (int) Math.round(mouseY - config.size * config.y / scale),
+                            (float) 0,
+                            (float) 0,
+                            (int) (config.size / scale),
+                            (int) (config.size / scale),
+                            (int) (config.size / scale),
+                            (int) (config.size / scale));
             RenderSystem.depthFunc(GL11.GL_LEQUAL);
 
             //for debugging
             //context.drawTexture(new Identifier("customcursor","textures/gui/pointer.png"), (int) (mouseX-4), (int) (mouseY-4),0,0,8,8,8,8);
-
-            GLFW.glfwSetInputMode(client.getWindow().getHandle(),GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
-        }
-        else {
-            GLFW.glfwSetInputMode(client.getWindow().getHandle(),GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+            GLFW.glfwSetInputMode(client.getWindow().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+        } else {
+            GLFW.glfwSetInputMode(client.getWindow().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
         }
     }
 }

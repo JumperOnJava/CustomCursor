@@ -4,6 +4,7 @@ import io.github.jumperonjava.customcursor.CursorRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.GameRenderer;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,3 +21,4 @@ public class ScreenMixin {
         CursorRenderer.render(context,mouseX,mouseY,delta);
     }
 }
+
