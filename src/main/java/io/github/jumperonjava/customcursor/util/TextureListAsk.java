@@ -1,9 +1,11 @@
 package io.github.jumperonjava.customcursor.util;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.option.LanguageOptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -13,7 +15,9 @@ import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 
@@ -74,13 +78,19 @@ public abstract class TextureListAsk extends AskScreen<Identifier> {
     private void refreshListByFilter(String s) {
         lastFilter = s;
         list.children().clear();
+        //? if < 1.21.4 {
         list.setScrollAmount(0);
+        //?} else {
+        /*list.setScrollY(0);
+        *///?}
         for(var key : textures){
+            if(key == null) continue;
             var id = key.toString();
             if(!id.toLowerCase().contains(s.toLowerCase()))
                 continue;
+            Identifier finalKey = key;
             var entry = new ScrollListWidget.ScrollListEntry(key, ()-> {
-                this.selectedTexture = key;
+                this.selectedTexture = finalKey;
                 selectedTextureWidget.setTexture(selectedTexture);
             });
             list.addEntry(entry);
@@ -90,10 +100,10 @@ public abstract class TextureListAsk extends AskScreen<Identifier> {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         //? if <= 1.20.1 {
-        renderBackground(context);
-        //?} else {
-        /*renderBackground(context,mouseX,mouseY,delta);
-        *///?}
+        /*renderBackground(context);
+        *///?} else {
+        renderBackground(context,mouseX,mouseY,delta);
+        //?}
         super.render(context, mouseX, mouseY, delta);
         context.drawText(
                 textRenderer,

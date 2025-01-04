@@ -7,6 +7,7 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.profiler.Profiler;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
@@ -21,13 +22,21 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class GameRendererMixin {
     @Shadow @Nullable protected MinecraftClient client;
 
+    //? if < 1.21.3
     @Inject(method = "render",at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;push(Ljava/lang/String;)V", ordinal = 1),locals = LocalCapture.CAPTURE_FAILSOFT)
+
     //? if < 1.21 {
+    
     void renderCursor(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext){
         CursorRenderer.render(drawContext,i,j,tickDelta);
     }
-     //?} else {
+     //?} elif < 1.21.3 {
     /*void renderCursor(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrix4fStack, DrawContext drawContext){
+        CursorRenderer.render(drawContext,i,j,tickCounter.getLastDuration());
+    }
+    *///?} else {
+    /*@Inject(method = "render",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;draw()V"),locals = LocalCapture.CAPTURE_FAILSOFT)
+    void renderCursor(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, Profiler profiler, boolean bl, int i, int j, Window window, Matrix4f matrix4f, Matrix4fStack matrix4fStack, DrawContext drawContext){
         CursorRenderer.render(drawContext,i,j,tickCounter.getLastDuration());
     }
     *///?}

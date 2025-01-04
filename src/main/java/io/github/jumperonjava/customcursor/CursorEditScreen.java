@@ -4,10 +4,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.jumperonjava.customcursor.util.AskScreen;
 import io.github.jumperonjava.customcursor.util.FolderTextureAskList;
 import io.github.jumperonjava.customcursor.util.SliderWidget;
+import io.github.jumperonjava.customcursor.util.VersionFunctions;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.GameModeSelectionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
@@ -102,10 +105,10 @@ public class CursorEditScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         int heightOffset = (int) (24*2.75   );
         //? if <= 1.20.1 {
-        renderBackground(context);
-        //?} else {
-        /*renderBackground(context,mouseX,mouseY,delta);
-        *///?}
+        /*renderBackground(context);
+        *///?} else {
+        renderBackground(context,mouseX,mouseY,delta);
+        //?}
         super.render(context, mouseX, mouseY, delta);
         var vec = new Vec2f(mouseX-width/2,mouseY-height/2).normalize().multiply(delta);
         bgx += vec.x;
@@ -115,12 +118,12 @@ public class CursorEditScreen extends Screen {
         renderCheckerboard(
                 context,
                 delta,
-                ColorHelper.Argb.getArgb(255,
+                VersionFunctions.ColorHelper.getArgb(255,
                         (int) (128+64*Math.pow(Math.sin(color+0*Math.PI/3),n)),
                         (int) (128+64*Math.pow(Math.sin(color+2*Math.PI/3),n)),
                         (int) (128+64*Math.pow(Math.sin(color+4*Math.PI/3),n))
                 ),
-                ColorHelper.Argb.getArgb(255,
+                VersionFunctions.ColorHelper.getArgb(255,
                         (int) ((192+63*Math.pow(Math.cos(color+0*Math.PI/3),n))),
                         (int) ((192+63*Math.pow(Math.cos(color+2*Math.PI/3),n))),
                         (int) ((192+63*Math.pow(Math.cos(color+4*Math.PI/3),n)))
@@ -128,14 +131,19 @@ public class CursorEditScreen extends Screen {
         );
 
         try{
-            context.drawTexture(this.targetConfig.identifier,width/2-64,height/2+heightOffset-64,0,0,128,128, 128,128);
+            //? if < 1.20.3 {
+            /*VersionFunctions.drawTexture(context,this.targetConfig.identifier,width/2-64,height/2+heightOffset-64,0,0,128,128, 128,128);
+            *///?} else {
+            VersionFunctions.drawTexture(context,this.targetConfig.identifier,width/2-64,height/2+heightOffset-64,0,0,128,128, 128,128);
+            //?}
         }
         catch (Exception e){
             CustomCursorInit.LOGGER.warn("Failed to find texture %s".formatted(this.targetConfig.identifier.toString()));
         }
 
-        context.drawTexture(Identifier.of("customcursor","textures/gui/pointer.png"), (int) (width/2-64+this.targetConfig.x*128)-4, (int) (height/2-64+this.targetConfig.y*128)+heightOffset-4,0,0,8,8, 8,8);
+        VersionFunctions.drawTexture(context,Identifier.of("customcursor","textures/gui/pointer.png"), (int) (width/2-64+this.targetConfig.x*128)-4, (int) (height/2-64+this.targetConfig.y*128)+heightOffset-4,0,0,8,8, 8,8);
     }
+
 
     private void renderCheckerboard(DrawContext context, float delta, int color1, int color2) {
         int heightOffset = (int) (24*2.75);
@@ -148,11 +156,11 @@ public class CursorEditScreen extends Screen {
         //bgy+=delta/9;
         context.getMatrices().push();
         context.getMatrices().translate((width/2-64+MathHelper.floorMod(bgx,16)-16),(height/2+heightOffset-64+MathHelper.floorMod(bgy,16)-16),0);
-        float r = ColorHelper.Argb.getRed(color1)/255f;
-        float g = ColorHelper.Argb.getGreen(color1)/255f;
-        float b = ColorHelper.Argb.getBlue(color1)/255f;
+        float r = VersionFunctions.ColorHelper.getRed(color1)/255f;
+        float g = VersionFunctions.ColorHelper.getGreen(color1)/255f;
+        float b = VersionFunctions.ColorHelper.getBlue(color1)/255f;
         RenderSystem.setShaderColor(r,g,b,255);
-        context.drawTexture(Identifier.of("customcursor","textures/gui/backgroundcheckerboard.png"),
+        VersionFunctions.drawTexture(context,Identifier.of("customcursor","textures/gui/backgroundcheckerboard.png"),
                 0,
                 0,
                 0,

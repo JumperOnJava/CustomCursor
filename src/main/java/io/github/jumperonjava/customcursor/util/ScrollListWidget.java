@@ -19,14 +19,14 @@ import java.util.function.Consumer;
  */
 public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWidget.ScrollListEntry> {
     public ScrollListWidget(MinecraftClient client, int width, int height, int x, int y, int itemHeight) {
-        //? if < 1.21 {
-        super(client,width,height,y,height,itemHeight);
-        //?} else {
-        /*super(client,width,height,y,itemHeight);
-        *///?}
+        //? if < 1.20.4 {
+        /*super(client,width,height,y,height,itemHeight);
+        *///?} else {
+        super(client,width,height,y,itemHeight);
+        //?}
 
-        //? if < 1.21
-        setLeftPos(x);
+        //? if < 1.20.4
+        /*setLeftPos(x);*/
     }
     @Override
     public int getRowWidth() {
@@ -35,32 +35,32 @@ public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWi
     public int addEntry(ScrollListEntry entry){
         return super.addEntry(entry);
     }
-    //? if < 1.21 {
-    @Override
+    //? if < 1.20.4 {
+    /*@Override
     protected int getScrollbarPositionX() {
         return width-6;
     }
-    //?}
+    *///?}
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    //? if < 1.21 {
-    @Override
+    //? if < 1.20.4 {
+    /*@Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         context.enableScissor(left,top,left+width,top+height-1);
         super.render(context, mouseX, mouseY, delta);
         context.disableScissor();
     }
-    //?} else {
-    /*@Override
+    *///?} else {
+    @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         context.enableScissor(getX(),getY(),getX()+width,getBottom());
         super.renderWidget(context, mouseX, mouseY, delta);
         context.disableScissor();
     }
-    *///?}
+    //?}
 
 
     public static class ScrollListEntry extends Entry<ScrollListEntry> {

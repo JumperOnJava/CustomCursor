@@ -81,8 +81,8 @@ public class TextureFolder {
                     var stream = Files.newInputStream(p, StandardOpenOption.READ);
                     var nativeImage = NativeImage.read(stream);
                     stream.close();
-
-                    textureMap.put(getIdentifierFor(p), nativeImage);
+                    var name = getIdentifierFor(p);
+                    textureMap.put(name, nativeImage);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -98,9 +98,14 @@ public class TextureFolder {
     }
 
     private Identifier getIdentifierFor(Path p) {
+
+        //in some versions if identifier is incorrect it throws
+        //in some it just sends null, so we throw an exception manually
         var s = p.toAbsolutePath().toString().replaceAll(Pattern.quote(path.toAbsolutePath().toString()),"").replace("\\","/").toLowerCase().substring(1);
         try{
-            return Identifier.of(namespace,s);
+            var name =  Identifier.of(namespace,s);
+            if(name != null) return name;
+            else throw new InvalidIdentifierException(namespace+":"+s);
         }
         catch (InvalidIdentifierException e){
             return Identifier.of(namespace,"wrongfilename" + s.hashCode());

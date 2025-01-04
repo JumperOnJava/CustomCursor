@@ -1,8 +1,10 @@
 package io.github.jumperonjava.customcursor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.jumperonjava.customcursor.util.VersionFunctions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -17,16 +19,20 @@ public class CursorRenderer {
         if (config.enabled) {
             var scale = client.getWindow().getScaleFactor();
             RenderSystem.depthFunc(GL11.GL_ALWAYS);
-            context.drawTexture
-                    (config.identifier,
-                            (int) Math.round(mouseX - config.size * config.x / scale),
-                            (int) Math.round(mouseY - config.size * config.y / scale),
-                            (float) 0,
-                            (float) 0,
-                            (int) (config.size / scale),
-                            (int) (config.size / scale),
-                            (int) (config.size / scale),
-                            (int) (config.size / scale));
+            var identifier = config.identifier;
+            var x = (int) Math.round(mouseX - config.size * config.x / scale);
+            var y = (int) Math.round(mouseY - config.size * config.y / scale);
+            var u = (float) 0;
+            var v = (float) 0;
+            var width = (int) (config.size / scale);
+            var height = (int) (config.size / scale);
+            var textureWidth = (int) (config.size / scale);
+            var textureHeight = (int) (config.size / scale);
+            //? if < 1.21.3 {
+            context.drawTexture(identifier,x,y,u,v,width,height,textureWidth,textureHeight);
+             //?} else {
+            /*context.drawTexture(RenderLayer::getGuiTexturedOverlay,identifier,x,y,u,v,width,height,textureWidth,textureHeight);
+            *///?}
             RenderSystem.depthFunc(GL11.GL_LEQUAL);
 
             //for debugging

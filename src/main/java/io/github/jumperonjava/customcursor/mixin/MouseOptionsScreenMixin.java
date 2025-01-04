@@ -74,6 +74,5 @@ public abstract class MouseOptionsScreenMixin extends GameOptionsScreen {
                                         CustomCursorInit.setConfig(cfg);
                                     }))).dimensions(0,0,0,0).build()));
         }
-    //>}
+    *///?}
 }
-*/
