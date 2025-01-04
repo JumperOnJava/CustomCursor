@@ -100,10 +100,10 @@ public abstract class TextureListAsk extends AskScreen<Identifier> {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         //? if <= 1.20.1 {
-        /*renderBackground(context);
-        *///?} else {
-        renderBackground(context,mouseX,mouseY,delta);
-        //?}
+        renderBackground(context);
+        //?} else {
+        /*renderBackground(context,mouseX,mouseY,delta);
+        *///?}
         super.render(context, mouseX, mouseY, delta);
         context.drawText(
                 textRenderer,

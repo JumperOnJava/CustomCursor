@@ -105,10 +105,10 @@ public class CursorEditScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         int heightOffset = (int) (24*2.75   );
         //? if <= 1.20.1 {
-        /*renderBackground(context);
-        *///?} else {
-        renderBackground(context,mouseX,mouseY,delta);
-        //?}
+        renderBackground(context);
+        //?} else {
+        /*renderBackground(context,mouseX,mouseY,delta);
+        *///?}
         super.render(context, mouseX, mouseY, delta);
         var vec = new Vec2f(mouseX-width/2,mouseY-height/2).normalize().multiply(delta);
         bgx += vec.x;
@@ -132,10 +132,10 @@ public class CursorEditScreen extends Screen {
 
         try{
             //? if < 1.20.3 {
-            /*VersionFunctions.drawTexture(context,this.targetConfig.identifier,width/2-64,height/2+heightOffset-64,0,0,128,128, 128,128);
-            *///?} else {
             VersionFunctions.drawTexture(context,this.targetConfig.identifier,width/2-64,height/2+heightOffset-64,0,0,128,128, 128,128);
-            //?}
+            //?} else {
+            /*VersionFunctions.drawTexture(context,this.targetConfig.identifier,width/2-64,height/2+heightOffset-64,0,0,128,128, 128,128);
+            *///?}
         }
         catch (Exception e){
             CustomCursorInit.LOGGER.warn("Failed to find texture %s".formatted(this.targetConfig.identifier.toString()));
