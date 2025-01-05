@@ -45,6 +45,11 @@ dependencies {
     if (loader == "forge") {
         "forge"("net.minecraftforge:forge:${minecraft}-${mod.dep("forge_loader")}")
         mappings("net.fabricmc:yarn:$minecraft+build.${mod.dep("yarn_build")}:v2")
+
+        "io.github.llamalad7:mixinextras-forge:${mod.dep("mixin_extras")}".let {
+            implementation(it)
+            include(it)
+        }
     }
     if (loader == "neoforge") {
         "neoForge"("net.neoforged:neoforge:${mod.dep("neoforge_loader")}")
@@ -74,7 +79,6 @@ loom {
 }
 
 
-val isFabric = loader == "fabric"
 val localProperties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
@@ -85,14 +89,14 @@ publishMods {
     val curseforgeToken = localProperties.getProperty("publish.curseforgeToken", "")
 
 
-    file = project.tasks.jar.get().archiveFile
+    file = project.tasks.remapJar.get().archiveFile
     dryRun = modrinthToken == null || curseforgeToken == null
 
     displayName =
         "${mod.name} ${loader.replaceFirstChar { it.uppercase() }} ${property("mod.mc_title")}-${mod.version}"
     version = mod.version
     changelog = rootProject.file("CHANGELOG.md").readText()
-    type = STABLE
+    type = BETA
 
     modLoaders.add(loader)
 
@@ -101,7 +105,7 @@ publishMods {
         projectId = property("publish.modrinth").toString()
         accessToken = modrinthToken
         targets.forEach(minecraftVersions::add)
-        if (isFabric) {
+        if (loader == "fabric") {
             requires("fabric-api")
             optional("modmenu")
         }
@@ -111,7 +115,7 @@ publishMods {
         projectId = property("publish.curseforge").toString()
         accessToken = curseforgeToken.toString()
         targets.forEach(minecraftVersions::add)
-        if (isFabric) {
+        if (loader == "fabric") {
             requires("fabric-api")
             optional("modmenu")
         }
