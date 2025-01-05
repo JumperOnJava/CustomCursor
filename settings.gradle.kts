@@ -17,12 +17,15 @@ plugins {
 stonecutter {
     centralScript = "build.gradle.kts"
     kotlinController = true
-    create(rootProject) {
-        versions("1.20.1","1.20.4", "1.21.1", "1.21.3", "1.21.4")
-        branch("fabric")
-        branch("forge") { versions("1.20.1") }
-        branch("neoforge") { versions("1.20.4", "1.21.1", "1.21.3", "1.21.4") }
+    shared {
+        fun mc(loader: String, vararg versions: String) {
+            for (version in versions) vers("$version-$loader", version)
+        }
+        mc("fabric","1.20.1","1.20.4", "1.21.1", "1.21.3", "1.21.4", )
+        mc("forge","1.20.1",)
+        mc("neoforge", "1.20.4", "1.21.1", "1.21.3", "1.21.4")
     }
+    create(rootProject)
 }
 
 rootProject.name = "CustomCursor"
