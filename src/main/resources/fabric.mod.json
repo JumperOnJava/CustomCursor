@@ -3,13 +3,13 @@
   "id": "${id}",
   "version": "${version}",
   "name": "${name}",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "",
   "authors": [
-    "Me!"
+    "JavaJumper"
   ],
   "contact": {
   },
-  "license": "CC0-1.0",
+  "license": "LGPLv3",
   "icon": "assets/${id}/icon.png",
   "environment": "*",
   "entrypoints": {

@@ -1,14 +1,15 @@
 modLoader = "javafml"
 loaderVersion = "*"
 license = "LGPLv3"
+issueTrackerURL="https://JavaJumper/CustomCursor/issues"
 
 [[mods]]
 modId = "customcursor"
 version = "${version}"
 displayName = "${name}"
-authors = "Me"
-description = "This is an example description! Tell everyone what your mod is about!"
-logoFile = "assets/${id}/icon.png"
+authors = "JavaJumper"
+description = ""
+logoFile = "assets/customcursor/icon.png"
 logoBlur = false
 
 [[mixins]]
