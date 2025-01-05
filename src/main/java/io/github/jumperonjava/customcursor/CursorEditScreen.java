@@ -169,4 +169,11 @@ public class CursorEditScreen extends Screen {
         context.getMatrices().pop();
         context.disableScissor();
     }
+    public static CursorEditScreen createCursorEditScreen(Screen parent) {
+        return new CursorEditScreen(parent, CustomCursorInit.getConfig().pointer, c -> {
+            var cfg = new CursorConfigStorage();
+            cfg.pointer = c;
+            CustomCursorInit.setConfig(cfg);
+        });
+    }
 }

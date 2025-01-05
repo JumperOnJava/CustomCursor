@@ -22,13 +22,19 @@ architectury.common(stonecutter.tree.branches.mapNotNull {
 })
 repositories{
     maven("https://maven.neoforged.net/releases/")
+
+    //modmenu
+    maven("https://maven.terraformersmc.com/")
+    //placeholder api (modmenu depencency)
+    maven("https://maven.nucleoid.xyz/")
 }
 dependencies {
     minecraft("com.mojang:minecraft:$minecraft")
 
     if (loader == "fabric") {
-        modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+        modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader")}")
         mappings("net.fabricmc:yarn:$minecraft+build.${mod.dep("yarn_build")}:v2")
+        modImplementation("com.terraformersmc:modmenu:${mod.dep("modmenu_version")}")
 
         //some features (like automatic resource loading from non vanilla namespaces) work only with fabric API installed
         //for example translations from assets/modid/lang/en_us.json won't be working, same stuff with textures
@@ -37,11 +43,11 @@ dependencies {
 
     }
     if (loader == "forge") {
-        "forge"("net.minecraftforge:forge:${minecraft}-${property("deps.forge_loader")}")
+        "forge"("net.minecraftforge:forge:${minecraft}-${mod.dep("forge_loader")}")
         mappings("net.fabricmc:yarn:$minecraft+build.${mod.dep("yarn_build")}:v2")
     }
     if (loader == "neoforge") {
-        "neoForge"("net.neoforged:neoforge:${property("deps.neoforge_loader")}")
+        "neoForge"("net.neoforged:neoforge:${mod.dep("neoforge_loader")}")
         mappings(loom.layered {
             mappings("net.fabricmc:yarn:$minecraft+build.${mod.dep("yarn_build")}:v2")
             mod.dep("neoforge_patch").takeUnless { it.startsWith('[') }?.let {
@@ -58,6 +64,12 @@ loom {
         get("vineflower").apply { // Adds names to lambdas - useful for mixins
             options.put("mark-corresponding-synthetics", "1")
         }
+    }
+    if(loader == "forge") {
+        forge.mixinConfigs(
+            "customcursor-common.mixins.json",
+            "customcursor-forge.mixins.json",
+        )
     }
 }
 
@@ -104,14 +116,6 @@ publishMods {
             optional("modmenu")
         }
     }
-}
-
-java {
-    withSourcesJar()
-    val java = if (stonecutter.eval(minecraft, ">=1.20.5"))
-        JavaVersion.VERSION_21 else JavaVersion.VERSION_17
-    targetCompatibility = java
-    sourceCompatibility = java
 }
 
 java {

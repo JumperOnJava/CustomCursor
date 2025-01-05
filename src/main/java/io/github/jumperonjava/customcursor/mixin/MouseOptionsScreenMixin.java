@@ -31,11 +31,7 @@ public abstract class MouseOptionsScreenMixin extends GameOptionsScreen {
     void inject(CallbackInfo ci){
         int k = this.height / 6 - 12 + 24 * 3;
         var cursorEditScreenButton = new ButtonWidget.Builder(Text.translatable("customcursor.openbutton"),(buttonWidget)->{
-            MinecraftClient.getInstance().setScreen(new CursorEditScreen(this, CustomCursorInit.getConfig().pointer, c -> {
-                var cfg = new CursorConfigStorage();
-                cfg.pointer = c;
-                CustomCursorInit.setConfig(cfg);
-            }));
+            MinecraftClient.getInstance().setScreen(CursorEditScreen.createCursorEditScreen(this));
         }).dimensions(width / 2 - 155, k, 310, 20).build();
         addDrawableChild(cursorEditScreenButton);
 
@@ -60,19 +56,12 @@ public abstract class MouseOptionsScreenMixin extends GameOptionsScreen {
         /*@Inject(method = "addOptions", at = @At("TAIL"))
         public void addOptions(CallbackInfo ci) {
             this.body.addWidgetEntry
-                    (ButtonWidget.builder
-                            (Text.translatable("customcursor.openbutton"),
-                                    (buttonWidget) -> client.setScreen(new CursorEditScreen(this, CustomCursorInit.getConfig().pointer, c -> {
-                                        var cfg = new CursorConfigStorage();
-                                        cfg.pointer = c;
-                                        CustomCursorInit.setConfig(cfg);
-                                    }))).build(),(ButtonWidget.builder
-                            (Text.translatable("customcursor.openbutton"),
-                                    (buttonWidget) -> client.setScreen(new CursorEditScreen(this, CustomCursorInit.getConfig().pointer, c -> {
-                                        var cfg = new CursorConfigStorage();
-                                        cfg.pointer = c;
-                                        CustomCursorInit.setConfig(cfg);
-                                    }))).dimensions(0,0,0,0).build()));
+                            (
+                                    ButtonWidget.builder(Text.translatable("customcursor.openbutton"),
+                                            (buttonWidget) -> client.setScreen(CursorEditScreen.createCursorEditScreen(this))).build(),
+                                    ButtonWidget.builder(Text.translatable("customcursor.openbutton"),
+                                            (buttonWidget) -> client.setScreen(CursorEditScreen.createCursorEditScreen(this))).dimensions(0,0,0,0).build()
+                            );
         }
     *///?}
 }

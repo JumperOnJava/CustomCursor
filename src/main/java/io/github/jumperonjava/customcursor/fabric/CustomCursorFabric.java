@@ -1,5 +1,5 @@
 //? if fabric {
-package io.github.jumperonjava.customcursor.fabric;
+/*package io.github.jumperonjava.customcursor.fabric;
 
 import net.fabricmc.api.ModInitializer;
 import io.github.jumperonjava.customcursor.CustomCursorInit;
@@ -11,4 +11,4 @@ public class CustomCursorFabric implements ModInitializer {
 		CustomCursorInit.entrypoint((s)-> FabricLoader.getInstance().isModLoaded(s));
 	}
 }
-//?}
+*///?}

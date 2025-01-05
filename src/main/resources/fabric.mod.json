@@ -15,6 +15,9 @@
   "entrypoints": {
     "main": [
       "io.github.jumperonjava.customcursor.fabric.CustomCursorFabric"
+    ],
+    "modmenu": [
+      "io.github.jumperonjava.customcursor.fabric.ModMenuIntegration"
     ]
   },
   "mixins": [
