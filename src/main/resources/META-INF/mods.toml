@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "*"
 license = "LGPLv3"
-issueTrackerURL="https://JavaJumper/CustomCursor/issues"
+issueTrackerURL="https://github.com/jumperonjava/ImagineBook/issues"
 
 [[mods]]
 modId = "customcursor"
