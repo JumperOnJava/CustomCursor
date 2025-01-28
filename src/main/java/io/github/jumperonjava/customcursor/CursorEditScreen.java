@@ -6,18 +6,14 @@ import io.github.jumperonjava.customcursor.util.FolderTextureAskList;
 import io.github.jumperonjava.customcursor.util.SliderWidget;
 import io.github.jumperonjava.customcursor.util.VersionFunctions;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.GameModeSelectionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 
-import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -26,7 +22,7 @@ public class CursorEditScreen extends Screen {
     private final CursorSettings targetConfig;
     private final Screen parent;
 
-    public CursorEditScreen(Screen parent,CursorSettings cursorConfig, Consumer<CursorSettings> onSuccess) {
+    public CursorEditScreen(Screen parent, CursorSettings cursorConfig, Consumer<CursorSettings> onSuccess) {
         super(Text.empty());
         this.parent = parent;
         this.onSuccess = onSuccess;
@@ -38,55 +34,108 @@ public class CursorEditScreen extends Screen {
         client.setScreen(parent);
     }
 
+    private int centerX;
+    private int centerY;
+
+    private final int previewSize = 128;
+    private int previewPosX;
+    private int previewPosY;
+
     @Override
     protected void init() {
+
+        centerX = width / 2;
+        centerY = height / 2;
+
+        previewPosX = (width - previewSize) / 2;
+        previewPosY = centerY;
+
         super.init();
-        int heightOffset = (int) (24*2.75);
-        var field = new TextFieldWidget(client.textRenderer,width/2-128,height/2+heightOffset-64-24-22,256,20,Text.empty());
-        field.setMaxLength(512);
-        field.setText(this.targetConfig.identifier.toString());
-        field.setChangedListener((s)->{
-            try{
-                setIdentifier( Identifier.tryParse(s));
-            }
-            catch (Exception e){e.printStackTrace();}
+
+        Function<Boolean, Text> textfunc = (Boolean b) -> Text.translatable("customcursor.edit.enabled." + b);
+        var toggleWidget = new ButtonWidget.Builder(textfunc.apply(this.targetConfig.enabled), (buttonWidget) -> {
+            this.targetConfig.enabled = !targetConfig.enabled;
+            buttonWidget.setMessage(textfunc.apply(this.targetConfig.enabled));
         });
-        addDrawableChild(new ButtonWidget.Builder(Text.translatable("customcursor.edit.confirm"),this::confirm)
-                .dimensions(width/2-128,height/2+heightOffset-64-24-22*0,126,20).build());
-        addDrawableChild(new ButtonWidget.Builder(Text.translatable("customcursor.edit.cancel"),(f)->close())
-                .dimensions(width/2+2,height/2+heightOffset-64-24-22*0,126,20).build());
-        addDrawableChild(new ButtonWidget.Builder(Text.translatable("customcursor.edit.folder"),(b)->{
+
+        var confrmButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.confirm"), this::confirm);
+        var cancelButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.cancel"), (f) -> close());
+        var folderButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.folder"), (b) -> {
             AskScreen.ask(
                     new FolderTextureAskList(
                             CustomCursorInit.TEXTURE_FOLDER,
                             this::setIdentifier,
-                            ()->{}
+                            () -> {
+                            }
                     )
             );
-        })
-                .dimensions(width/2-128,height/2+heightOffset-64-24-22*2,256,20).build());
-        var xSlider = new SliderWidget(width/2-128,height/2+heightOffset-64-24-22*3,126,20,Text.translatable("customcursor.edit.x"),0.,1.,this.targetConfig.x,1/64f);
-        var ySlider = new SliderWidget(width/2+2,height/2+heightOffset-64-24-22*3,126,20,Text.translatable("customcursor.edit.y"),0.,1.,this.targetConfig.y,1/64f);
-        Function<Boolean,Text> textfunc = (Boolean b) -> {
-            return Text.translatable("customcursor.edit.enabled."+b);
-        };
-        var enabledButtonWidget = new ButtonWidget.Builder(textfunc.apply(this.targetConfig.enabled),(buttonWidget)->{
-            this.targetConfig.enabled=!targetConfig.enabled;
-            buttonWidget.setMessage(textfunc.apply(this.targetConfig.enabled));
-        })
-                .dimensions(width/2-128,height/2+heightOffset-64-24-22*5,256,20).build();
-        var maxsize = 256.;
-        var size = new SliderWidget(width/2-128,height/2+heightOffset-64-24-22*4,256,20,Text.translatable("customcursor.edit.size"),0,maxsize,this.targetConfig.y,1);
-        size.setValueOwn(this.targetConfig.size/maxsize);
-        xSlider.setChangedListener(d->this.targetConfig.x=(float)(double)d);
-        ySlider.setChangedListener(d->this.targetConfig.y=(float)(double)d);
-        size.setChangedListener(d->this.targetConfig.size=(int)(double)d);
+        });
 
-        addDrawableChild(xSlider);
-        addDrawableChild(ySlider);
-        addDrawableChild(enabledButtonWidget);
-        addDrawableChild(size);
-        addDrawableChild(field);
+        int rowSize = 24;
+        int columnSize = 128;
+
+        var rowCount = 6;
+        var columnCount = 2;
+
+        var startColumnPos = centerX - (columnCount * columnSize) / 2;
+        var startRowPos = centerY - rowCount * rowSize;
+
+        var rows = new int[rowCount];
+        var columns = new int[columnCount];
+
+        var padding = 2;
+        var sizePadding = padding*2;
+
+        for (int i = 0; i < rowCount; i++) {
+            rows[i] = startRowPos + rowSize * i + padding;
+        }
+        for (int i = 0; i < columnCount; i++) {
+            columns[i] = startColumnPos + columnSize * i+ padding;
+        }
+
+        int columnSizePadding = columnSize - sizePadding;
+        int twoColumnSizePadding = columnSize * 2 - sizePadding;
+        int rowSizePadding = rowSize - sizePadding;
+
+        toggleWidget = toggleWidget.dimensions(columns[0], rows[0], twoColumnSizePadding, rowSizePadding);
+        folderButton = folderButton.dimensions(columns[0], rows[3], twoColumnSizePadding, rowSizePadding);
+        confrmButton = confrmButton.dimensions(columns[0], rows[5], columnSizePadding, rowSizePadding);
+        cancelButton = cancelButton.dimensions(columns[1], rows[5], columnSizePadding, rowSizePadding);
+
+
+        var maxsize = 256.;
+        var imagePathField = new TextFieldWidget(client.textRenderer, columns[0], rows[4], twoColumnSizePadding, rowSizePadding, Text.empty());
+        var sizeSlider = new SliderWidget(columns[0], rows[1], twoColumnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.size"), 0, maxsize, this.targetConfig.y, 1);
+        var xPosSlider = new SliderWidget(columns[0], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.x"), 0., 1., this.targetConfig.x, 1 / 64f);
+        var yPosSlider = new SliderWidget(columns[1], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.y"), 0., 1., this.targetConfig.y, 1 / 64f);
+
+
+        sizeSlider.setValueOwn(this.targetConfig.size / maxsize);
+
+        xPosSlider.setChangedListener(d -> this.targetConfig.x = (float) (double) d);
+        yPosSlider.setChangedListener(d -> this.targetConfig.y = (float) (double) d);
+        sizeSlider.setChangedListener(d -> this.targetConfig.size = (int) (double) d);
+
+        imagePathField.setMaxLength(512);
+        imagePathField.setText(this.targetConfig.identifier.toString());
+        imagePathField.setChangedListener((s) -> {
+            try {
+                setIdentifier(Identifier.tryParse(s));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        addDrawableChild(toggleWidget.build());
+        addDrawableChild(confrmButton.build());
+        addDrawableChild(cancelButton.build());
+        addDrawableChild(folderButton.build());
+        addDrawableChild(imagePathField);
+        addDrawableChild(sizeSlider);
+        addDrawableChild(xPosSlider);
+        addDrawableChild(yPosSlider);
+        addDrawable(this::renderCheckerboard);
+        addDrawable(this::renderPreview);
     }
 
     private void setIdentifier(Identifier identifier) {
@@ -94,81 +143,87 @@ public class CursorEditScreen extends Screen {
     }
 
     private void confirm(ButtonWidget buttonWidget) {
-        try{
+        try {
             onSuccess.accept(targetConfig);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        catch (Exception e){e.printStackTrace();}
         this.close();
     }
-    private float bgx=0,bgy=0,color,rot;
+
+
+    //? if <= 1.20.1 {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        int heightOffset = (int) (24*2.75   );
-        //? if <= 1.20.1 {
         renderBackground(context);
-        //?} else {
-        /*renderBackground(context,mouseX,mouseY,delta);
-        *///?}
         super.render(context, mouseX, mouseY, delta);
-        var vec = new Vec2f(mouseX-width/2,mouseY-height/2).normalize().multiply(delta);
-        bgx += vec.x;
-        bgy += vec.y;
-        color+=delta*0.05;
-        var n = 2;
-        renderCheckerboard(
+    }
+    //?}
+
+    private void renderPreview(DrawContext context, int mouseX, int mouseY, float delta){
+
+        VersionFunctions.drawTexture(context, this.targetConfig.identifier, previewPosX, previewPosY, 0, 0, previewSize, previewSize, previewSize, previewSize);
+        VersionFunctions.drawTexture(
                 context,
-                delta,
-                VersionFunctions.ColorHelper.getArgb(255,
-                        (int) (128+64*Math.pow(Math.sin(color+0*Math.PI/3),n)),
-                        (int) (128+64*Math.pow(Math.sin(color+2*Math.PI/3),n)),
-                        (int) (128+64*Math.pow(Math.sin(color+4*Math.PI/3),n))
-                ),
-                VersionFunctions.ColorHelper.getArgb(255,
-                        (int) ((192+63*Math.pow(Math.cos(color+0*Math.PI/3),n))),
-                        (int) ((192+63*Math.pow(Math.cos(color+2*Math.PI/3),n))),
-                        (int) ((192+63*Math.pow(Math.cos(color+4*Math.PI/3),n)))
-                )
-        );
-
-        try{
-            //? if < 1.20.3 {
-            VersionFunctions.drawTexture(context,this.targetConfig.identifier,width/2-64,height/2+heightOffset-64,0,0,128,128, 128,128);
-            //?} else {
-            /*VersionFunctions.drawTexture(context,this.targetConfig.identifier,width/2-64,height/2+heightOffset-64,0,0,128,128, 128,128);
-            *///?}
-        }
-        catch (Exception e){
-            CustomCursorInit.LOGGER.warn("Failed to find texture %s".formatted(this.targetConfig.identifier.toString()));
-        }
-
-        VersionFunctions.drawTexture(context,Identifier.of("customcursor","textures/gui/pointer.png"), (int) (width/2-64+this.targetConfig.x*128)-4, (int) (height/2-64+this.targetConfig.y*128)+heightOffset-4,0,0,8,8, 8,8);
+                Identifier.of("customcursor", "textures/gui/pointer.png"),
+                (int) (previewPosX + this.targetConfig.x * previewSize) - 4,
+                (int) (previewPosY + this.targetConfig.y * previewSize) - 4,
+                0, 0,
+                8, 8,
+                8, 8);
     }
 
+    private float bgx = 0, bgy = 0, color;
 
-    private void renderCheckerboard(DrawContext context, float delta, int color1, int color2) {
-        int heightOffset = (int) (24*2.75);
-        context.fill(width/2-64,height/2+heightOffset-64,width/2+64,height/2+heightOffset+64,color2);
-        context.enableScissor(width/2-64,height/2+heightOffset-64,width/2+64,height/2+heightOffset+64);
-        rot+=new Random().nextFloat(-0.5f,0.5f)*delta/4;
-        //bgx+=Math.sin(rot)/9;
-        //bgy+=Math.cos(rot)/9;
-        //bgx+=delta/9;
-        //bgy+=delta/9;
+    private void renderCheckerboard(DrawContext context, int mouseX, int mouseY, float delta) {
+
+        //generates slowly changing pastel colors for backround
+        color += delta * 0.05f;
+        var n = 2;
+        var color1 = VersionFunctions.ColorHelper.getArgb(255,
+                (int) (128 + 64 * Math.pow(Math.sin(color + 0 * Math.PI / 3), n)),
+                (int) (128 + 64 * Math.pow(Math.sin(color + 2 * Math.PI / 3), n)),
+                (int) (128 + 64 * Math.pow(Math.sin(color + 4 * Math.PI / 3), n))
+        );
+        var color2 = VersionFunctions.ColorHelper.getArgb(255,
+                (int) ((192 + 63 * Math.pow(Math.cos(color + 0 * Math.PI / 3), n))),
+                (int) ((192 + 63 * Math.pow(Math.cos(color + 2 * Math.PI / 3), n))),
+                (int) ((192 + 63 * Math.pow(Math.cos(color + 4 * Math.PI / 3), n)))
+        );
+
+        float r = VersionFunctions.ColorHelper.getRed(color1) / 255f;
+        float g = VersionFunctions.ColorHelper.getGreen(color1) / 255f;
+        float b = VersionFunctions.ColorHelper.getBlue(color1) / 255f;
+
+
+        var vec = new Vec2f(mouseX - (previewPosX+previewSize/2f), mouseY - (previewPosY+previewSize/2f)).normalize().multiply(delta);
+        bgx += vec.x;
+        bgy += vec.y;
+
+        context.fill(previewPosX, previewPosY, previewPosX + previewSize, previewPosY + previewSize, color2);
+        context.enableScissor(previewPosX, previewPosY, previewPosX + previewSize, previewPosY + previewSize);
+
+
+        var cellsize = previewSize/8;
         context.getMatrices().push();
-        context.getMatrices().translate((width/2-64+MathHelper.floorMod(bgx,16)-16),(height/2+heightOffset-64+MathHelper.floorMod(bgy,16)-16),0);
-        float r = VersionFunctions.ColorHelper.getRed(color1)/255f;
-        float g = VersionFunctions.ColorHelper.getGreen(color1)/255f;
-        float b = VersionFunctions.ColorHelper.getBlue(color1)/255f;
-        RenderSystem.setShaderColor(r,g,b,255);
-        VersionFunctions.drawTexture(context,Identifier.of("customcursor","textures/gui/backgroundcheckerboard.png"),
+        context.getMatrices().translate(
+                (previewPosX + MathHelper.floorMod(bgx, cellsize) - cellsize),
+                (previewPosY + MathHelper.floorMod(bgy, cellsize) - cellsize),
+                0);
+        RenderSystem.setShaderColor(r, g, b, 255);
+
+        int checkerRenderSize = previewSize + cellsize;
+        VersionFunctions.drawTexture(context, Identifier.of("customcursor", "textures/gui/backgroundcheckerboard.png"),
                 0,
                 0,
                 0,
-                0,144,144,144,144);
-        RenderSystem.setShaderColor(1,1,1,1);
+                0, checkerRenderSize, checkerRenderSize, checkerRenderSize, checkerRenderSize);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+
         context.getMatrices().pop();
         context.disableScissor();
     }
+
     public static CursorEditScreen createCursorEditScreen(Screen parent) {
         return new CursorEditScreen(parent, CustomCursorInit.getConfig().pointer, c -> {
             var cfg = new CursorConfigStorage();
