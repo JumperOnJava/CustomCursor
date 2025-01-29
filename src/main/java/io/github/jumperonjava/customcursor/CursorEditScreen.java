@@ -100,12 +100,9 @@ public class CursorEditScreen extends Screen {
 
         var maxsize = 256.;
         var imagePathField = new TextFieldWidget(client.textRenderer, columns[0], rows[4], twoColumnSizePadding, rowSizePadding, Text.empty());
-        var sizeSlider = new SliderWidget(columns[0], rows[1], twoColumnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.size"), 0, maxsize, this.targetConfig.y, 1);
-        var xPosSlider = new SliderWidget(columns[0], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.x"), 0., 1., this.targetConfig.x, 1 / 64f);
-        var yPosSlider = new SliderWidget(columns[1], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.y"), 0., 1., this.targetConfig.y, 1 / 64f);
-
-
-        sizeSlider.setValueOwn(this.targetConfig.size / maxsize);
+        var sizeSlider = new SliderWidget(columns[0], rows[1], twoColumnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.size"), this.targetConfig.size,0, maxsize,  256);
+        var xPosSlider = new SliderWidget(columns[0], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.x"), this.targetConfig.x,0., 1.,  64);
+        var yPosSlider = new SliderWidget(columns[1], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.y"), this.targetConfig.y,0., 1.,  64);
 
         xPosSlider.setChangedListener(d -> this.targetConfig.x = (float) (double) d);
         yPosSlider.setChangedListener(d -> this.targetConfig.y = (float) (double) d);
