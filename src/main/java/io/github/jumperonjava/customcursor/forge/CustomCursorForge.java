@@ -1,5 +1,5 @@
 //? if forge {
-package io.github.jumperonjava.customcursor.forge;
+/*package io.github.jumperonjava.customcursor.forge;
 
 import io.github.jumperonjava.customcursor.CursorEditScreen;
 import io.github.jumperonjava.customcursor.CustomCursorInit;
@@ -14,4 +14,4 @@ public class CustomCursorForge {
         MinecraftForge.registerConfigScreen(CursorEditScreen::createCursorEditScreen);
 	}
 }
-//?}
+*///?}

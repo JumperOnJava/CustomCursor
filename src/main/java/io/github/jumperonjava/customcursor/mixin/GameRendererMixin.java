@@ -1,7 +1,7 @@
 package io.github.jumperonjava.customcursor.mixin;
 
 //? if !forge
-/*import com.llamalad7.mixinextras.sugar.Local;*/
+import com.llamalad7.mixinextras.sugar.Local;
 import io.github.jumperonjava.customcursor.CursorRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;

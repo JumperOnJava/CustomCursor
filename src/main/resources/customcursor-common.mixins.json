@@ -6,7 +6,6 @@
           "CobblemonFix",
           "LoadFolderTexturesEventMixin",
           "MouseOptionsScreenMixin",
-          "ScreenMixin",
           "TooltipPositionMixin",
           "GameRendererMixin"
   ],
