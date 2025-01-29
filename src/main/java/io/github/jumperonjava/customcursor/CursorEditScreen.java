@@ -1,10 +1,7 @@
 package io.github.jumperonjava.customcursor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.jumperonjava.customcursor.util.AskScreen;
-import io.github.jumperonjava.customcursor.util.FolderTextureAskList;
-import io.github.jumperonjava.customcursor.util.SliderWidget;
-import io.github.jumperonjava.customcursor.util.VersionFunctions;
+import io.github.jumperonjava.customcursor.util.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -61,12 +58,10 @@ public class CursorEditScreen extends Screen {
         var confrmButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.confirm"), this::confirm);
         var cancelButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.cancel"), (f) -> close());
         var folderButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.folder"), (b) -> {
-            AskScreen.ask(
+            FolderTextureAskList.ask(
                     new FolderTextureAskList(
                             CustomCursorInit.TEXTURE_FOLDER,
-                            this::setIdentifier,
-                            () -> {
-                            }
+                            this::setIdentifier
                     )
             );
         });

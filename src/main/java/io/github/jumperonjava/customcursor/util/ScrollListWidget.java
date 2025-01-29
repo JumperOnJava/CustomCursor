@@ -80,7 +80,7 @@ public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWi
                            int mouseX, int mouseY,
                            boolean hovered,
                            float delta) {
-            new TextureWidget(key,x,y,entryHeight,entryHeight).render(context, mouseX, mouseY, delta);
+            TextureWidget.render(context,key,x,y,entryHeight,entryHeight);
             context.drawText(MinecraftClient.getInstance().textRenderer,key.toString(),x+entryHeight+5,y+entryHeight/2-5,0xFFFFFFFF,true);
         }
 
