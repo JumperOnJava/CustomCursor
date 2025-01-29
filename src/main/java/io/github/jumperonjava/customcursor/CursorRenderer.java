@@ -3,6 +3,7 @@ package io.github.jumperonjava.customcursor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 

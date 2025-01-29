@@ -68,14 +68,14 @@ public class FolderTextureAskList extends Screen {
         addDrawableChild(accept.build());
         addDrawableChild(cancel1.build());
         addDrawableChild(cancel.build());
-        addDrawableChild(((context, mouseX, mouseY, delta) ->
+        addDrawable(((context, mouseX, mouseY, delta) ->
         {
             var texture = selectedTexture == EMPTY_TEXTURE ? Identifier.of("minecraft", "textures/item/barrier.png") : selectedTexture;
             TextureWidget.render(context,texture, gap / 2, height - 40 - gap / 2, 40, 40);
         }));
 
         setTexturesCallback(this::setTextures);
-        addDrawableChild(((context, mouseX, mouseY, delta) -> context.drawText(
+        addDrawable(((context, mouseX, mouseY, delta) -> context.drawText(
                 textRenderer,
                 Text.translatable("customcursor.folder.selected").append(": ").append(selectedTexture.toString()),
                 45,
