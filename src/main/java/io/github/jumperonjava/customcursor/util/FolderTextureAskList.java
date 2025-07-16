@@ -113,16 +113,20 @@ public class FolderTextureAskList extends Screen {
         /*list.setScrollY(0);
         *///?}
         for (var key : textures) {
-            if (key == null) continue;
-            var id = key.toString();
-            if (!id.toLowerCase().contains(s.toLowerCase()))
-                continue;
-            Identifier finalKey = key;
-            var entry = new ScrollListWidget.ScrollListEntry(key, () -> {
-                this.selectedTexture = finalKey;
-            });
-            list.addEntry(entry);
+            extracted(s, key);
         }
+    }
+
+    private void extracted(String s, Identifier key) {
+        if (key == null) return;
+        var id = key.toString();
+        if (!id.toLowerCase().contains(s.toLowerCase()))
+            return;
+        Identifier finalKey = key;
+        var entry = new ScrollListWidget.ScrollListEntry(key, () -> {
+            this.selectedTexture = finalKey;
+        });
+        list.addEntry(entry);
     }
 
     //? if <= 1.20.1 {

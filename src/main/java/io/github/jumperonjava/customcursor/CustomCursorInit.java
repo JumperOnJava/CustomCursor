@@ -14,12 +14,9 @@ import java.util.function.Function;
 public class CustomCursorInit
 {
 	public static final String MOD_ID = "customcursorcomm";
-	public static final MinecraftClient client = MinecraftClient.getInstance();
 	public static final Logger LOGGER = LoggerFactory.getLogger("CustomCursor");
-	public static final TextureFolder TEXTURE_FOLDER = new TextureFolder(
-			client.runDirectory.toPath().resolve("cursors"),
-			"cursorfolder"
-	);
+	private static TextureFolder TEXTURE_FOLDER;
+
 	private static CursorConfigStorage config;
 	private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -36,7 +33,7 @@ public class CustomCursorInit
 	}
 
 	private static File getConfigFile(){
-		return client.getResourcePackDir().resolve("../config/customcursor.json").toFile();
+		return MinecraftClient.getInstance().runDirectory.toPath().resolve("config/customcursor.json").toFile();
 	}
 
 	public static CursorConfigStorage getConfig() {
@@ -49,5 +46,16 @@ public class CustomCursorInit
 		var json = gson.toJson(config);
 		FileReadWrite.write(getConfigFile(),json);
 		CustomCursorInit.config = config;
+	}
+	//on neoforge 1.21.6+ itcre
+	public static TextureFolder getTextureFolder() {
+		if(TEXTURE_FOLDER==null)
+		{
+			TEXTURE_FOLDER = new TextureFolder(
+					MinecraftClient.getInstance().runDirectory.toPath().resolve("cursors"),
+					"cursorfolder"
+			);
+		}
+		return TEXTURE_FOLDER;
 	}
 }

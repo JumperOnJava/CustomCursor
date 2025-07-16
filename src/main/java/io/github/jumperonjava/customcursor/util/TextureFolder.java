@@ -70,31 +70,42 @@ public class TextureFolder {
 
     private void reregisterTextures(Runnable onFinishedCallback, List<Path> toRegister) {
         // Move the RenderSystem.recordRenderCall out of the forEach loop
+
+        //? if < 1.21.5
         RenderSystem.recordRenderCall(() -> {
-            var tman = MinecraftClient.getInstance().getTextureManager();
-            textures.forEach(tman::destroyTexture);
-            textures.clear();
-            Map<Identifier, NativeImage> textureMap = new HashMap<>();
-
-            toRegister.forEach((p) -> {
-                try {
-                    var stream = Files.newInputStream(p, StandardOpenOption.READ);
-                    var nativeImage = NativeImage.read(stream);
-                    stream.close();
-                    var name = getIdentifierFor(p);
-                    textureMap.put(name, nativeImage);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            textureMap.forEach((identifier, nativeImage) -> {
-                var texture = new NativeImageBackedTexture(nativeImage);
-                tman.registerTexture(identifier, texture);
-                textures.add(identifier);
-            });
-
-            onFinishedCallback.run();
+            ONLY_RENDERTHREAD_register(onFinishedCallback, toRegister);
+        //? if < 1.21.5
         });
+    }
+
+    private void ONLY_RENDERTHREAD_register(Runnable onFinishedCallback, List<Path> toRegister) {
+        var tman = MinecraftClient.getInstance().getTextureManager();
+        textures.forEach(tman::destroyTexture);
+        textures.clear();
+        Map<Identifier, NativeImage> textureMap = new HashMap<>();
+
+        toRegister.forEach((p) -> {
+            try {
+                var stream = Files.newInputStream(p, StandardOpenOption.READ);
+                var nativeImage = NativeImage.read(stream);
+                stream.close();
+                var name = getIdentifierFor(p);
+                textureMap.put(name, nativeImage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        textureMap.forEach((identifier, nativeImage) -> {
+            //? if < 1.21.5 {
+            var texture = new NativeImageBackedTexture(nativeImage);
+            //?} else {
+            /*var texture = new NativeImageBackedTexture(identifier::toString,nativeImage);
+            *///?}
+            tman.registerTexture(identifier, texture);
+            textures.add(identifier);
+        });
+
+        onFinishedCallback.run();
     }
 
     private Identifier getIdentifierFor(Path p) {
@@ -112,7 +123,7 @@ public class TextureFolder {
         }
     }
 
-    /**
+    /*
      * return COPY of textures list, empty if no scan was done
      */
     public List<Identifier> getTextures(){

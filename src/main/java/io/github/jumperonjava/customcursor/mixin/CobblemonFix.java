@@ -24,7 +24,6 @@ public class CobblemonFix {
         void lock(DrawContext context, float tickDelta, CallbackInfo ci){
          //?} else {
     /*void lock(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        var tickDelta = tickCounter.getLastDuration();
         *///?}
         if (client.currentScreen == null) {
             if (locked)
