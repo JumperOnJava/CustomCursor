@@ -151,6 +151,13 @@ tasks.jar {
     archiveClassifier = "dev"
 }
 
+if (stonecutter.current.isActive) {
+    rootProject.tasks.register("runActive") {
+        group = "project"
+        dependsOn(tasks.named("runClient"))
+    }
+}
+
 tasks.processResources {
     properties(listOf("fabric.mod.json"),
         "id" to mod.id,

@@ -2,6 +2,8 @@ package io.github.jumperonjava.customcursor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.jumperonjava.customcursor.util.*;
+//? if >= 1.21.6
+/*import net.minecraft.client.gl.RenderPipelines;*/
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -60,7 +62,7 @@ public class CursorEditScreen extends Screen {
         var folderButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.folder"), (b) -> {
             FolderTextureAskList.ask(
                     new FolderTextureAskList(
-                            CustomCursorInit.TEXTURE_FOLDER,
+                            CustomCursorInit.getTextureFolder(),
                             this::setIdentifier
                     )
             );
@@ -197,6 +199,10 @@ public class CursorEditScreen extends Screen {
 
 
         var cellsize = previewSize/8;
+
+
+        //? if < 1.21.6 {
+        
         context.getMatrices().push();
         context.getMatrices().translate(
                 (previewPosX + MathHelper.floorMod(bgx, cellsize) - cellsize),
@@ -214,6 +220,29 @@ public class CursorEditScreen extends Screen {
 
         context.getMatrices().pop();
         context.disableScissor();
+        //?} else {
+
+
+        /*context.getMatrices().pushMatrix();
+        context.getMatrices().translate(
+                (previewPosX + MathHelper.floorMod(bgx, cellsize) - cellsize),
+                (previewPosY + MathHelper.floorMod(bgy, cellsize) - cellsize));
+
+
+
+        int color = VersionFunctions.ColorHelper.getArgb(255, (int) (r*255), (int) (g*255), (int) (b*255));
+
+        int checkerRenderSize = previewSize + cellsize;
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("customcursor", "textures/gui/backgroundcheckerboard.png"),
+                0,
+                0,
+                0,
+                0, checkerRenderSize, checkerRenderSize, checkerRenderSize, checkerRenderSize, color);
+
+        context.getMatrices().popMatrix();
+        context.disableScissor();
+
+        *///?}
     }
 
     public static CursorEditScreen createCursorEditScreen(Screen parent) {
