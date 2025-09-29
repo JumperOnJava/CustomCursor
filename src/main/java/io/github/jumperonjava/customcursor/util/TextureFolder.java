@@ -72,10 +72,10 @@ public class TextureFolder {
         // Move the RenderSystem.recordRenderCall out of the forEach loop
 
         //? if < 1.21.5
-        /*RenderSystem.recordRenderCall(() -> {*/
+        RenderSystem.recordRenderCall(() -> {
             ONLY_RENDERTHREAD_register(onFinishedCallback, toRegister);
         //? if < 1.21.5
-        /*});*/
+        });
     }
 
     private void ONLY_RENDERTHREAD_register(Runnable onFinishedCallback, List<Path> toRegister) {
@@ -97,10 +97,10 @@ public class TextureFolder {
         });
         textureMap.forEach((identifier, nativeImage) -> {
             //? if < 1.21.5 {
-            /*var texture = new NativeImageBackedTexture(nativeImage);
-            *///?} else {
-            var texture = new NativeImageBackedTexture(identifier::toString,nativeImage);
-            //?}
+            var texture = new NativeImageBackedTexture(nativeImage);
+            //?} else {
+            /*var texture = new NativeImageBackedTexture(identifier::toString,nativeImage);
+            *///?}
             tman.registerTexture(identifier, texture);
             textures.add(identifier);
         });

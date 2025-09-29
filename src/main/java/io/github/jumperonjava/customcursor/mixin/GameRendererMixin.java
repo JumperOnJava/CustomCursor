@@ -28,11 +28,11 @@ public class GameRendererMixin {
 
 
     //? if = 1.20.1 {
-    /*@Inject(method = "render",at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;push(Ljava/lang/String;)V",ordinal = 1),locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "render",at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;push(Ljava/lang/String;)V",ordinal = 1),locals = LocalCapture.CAPTURE_FAILHARD)
     void renderCursor(float tickDelta, long startTime, boolean tick, CallbackInfo ci, int i, int j, Window window, Matrix4f matrix4f, MatrixStack matrixStack, DrawContext drawContext){
         CursorRenderer.render(drawContext,i,j,tickDelta);
     }
-    *///?} elif = 1.20.4 {
+    //?} elif = 1.20.4 {
     /*@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;draw()V", shift = At.Shift.BEFORE))
     void renderCursor(float tickDelta, long startTime, boolean tick, CallbackInfo ci, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local DrawContext drawContext){
         CursorRenderer.render(drawContext,i,j,tickDelta);
@@ -50,17 +50,17 @@ public class GameRendererMixin {
     }
     *///?} else {
 
-    //? if fabric {
+    /*//? if fabric {
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;renderWithTooltip(Lnet/minecraft/client/gui/DrawContext;IIF)V", shift = At.Shift.AFTER))
     void renderCursor(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local DrawContext drawContext){
         CursorRenderer.render(drawContext,i,j,0);
     }
     //?} else if neoforge {
-    /*@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/client/ClientHooks;drawScreen(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/client/gui/DrawContext;IIF)V", shift = At.Shift.AFTER))
+    /^@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/client/ClientHooks;drawScreen(Lnet/minecraft/client/gui/screen/Screen;Lnet/minecraft/client/gui/DrawContext;IIF)V", shift = At.Shift.AFTER))
     void renderCursor(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, @Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local DrawContext drawContext){
         CursorRenderer.render(drawContext,i,j,0);
     }
-    *///?}
+    ^///?}
 
-    //?}
+    *///?}
 }

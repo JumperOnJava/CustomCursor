@@ -3,7 +3,7 @@ package io.github.jumperonjava.customcursor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.jumperonjava.customcursor.util.*;
 //? if >= 1.21.6
-import net.minecraft.client.gl.RenderPipelines;
+/*import net.minecraft.client.gl.RenderPipelines;*/
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.cursor.Cursor;
 import net.minecraft.client.gui.cursor.StandardCursors;
@@ -156,12 +156,12 @@ public class CursorEditScreen extends Screen {
 
 
     //? if <= 1.20.1 {
-    /*@Override
+    @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
     }
-    *///?}
+    //?}
 
     private void renderPreview(DrawContext context, int mouseX, int mouseY, float delta){
         VersionFunctions.drawTexture(context, this.targetCursor.identifier, previewPosX, previewPosY, 0, 0, previewSize, previewSize, previewSize, previewSize);
@@ -211,7 +211,7 @@ public class CursorEditScreen extends Screen {
 
         //? if < 1.21.6 {
         
-        /*context.getMatrices().push();
+        context.getMatrices().push();
         context.getMatrices().translate(
                 (previewPosX + MathHelper.floorMod(bgx, cellsize) - cellsize),
                 (previewPosY + MathHelper.floorMod(bgy, cellsize) - cellsize),
@@ -228,10 +228,10 @@ public class CursorEditScreen extends Screen {
 
         context.getMatrices().pop();
         context.disableScissor();
-        *///?} else {
+        //?} else {
 
 
-        context.getMatrices().pushMatrix();
+        /*context.getMatrices().pushMatrix();
         context.getMatrices().translate(
                 (previewPosX + MathHelper.floorMod(bgx, cellsize) - cellsize),
                 (previewPosY + MathHelper.floorMod(bgy, cellsize) - cellsize));
@@ -250,7 +250,7 @@ public class CursorEditScreen extends Screen {
         context.getMatrices().popMatrix();
         context.disableScissor();
 
-        //?}
+        *///?}
     }
 
     public static CursorEditScreen createCursorEditScreen(Screen parent) {

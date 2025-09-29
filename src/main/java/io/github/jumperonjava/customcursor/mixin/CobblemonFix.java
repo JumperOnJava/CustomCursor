@@ -21,10 +21,10 @@ public class CobblemonFix {
 
     @Inject(method = "render", at = @At("HEAD"))
         //? if < 1.21 {
-        /*void lock(DrawContext context, float tickDelta, CallbackInfo ci){
-         *///?} else {
-    void lock(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        //?}
+        void lock(DrawContext context, float tickDelta, CallbackInfo ci){
+         //?} else {
+    /*void lock(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+        *///?}
         if (client.currentScreen == null) {
             if (locked)
                 return;
