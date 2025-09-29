@@ -2,10 +2,10 @@ package io.github.jumperonjava.customcursor;
 
 import net.minecraft.client.MinecraftClient;
 //? if >= 1.21.6 {
-/*import net.minecraft.client.gl.RenderPipelines;
-*///?} else {
-import com.mojang.blaze3d.systems.RenderSystem;
-//?}
+import net.minecraft.client.gl.RenderPipelines;
+//?} else {
+/*import com.mojang.blaze3d.systems.RenderSystem;
+*///?}
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import org.lwjgl.glfw.GLFW;
@@ -22,7 +22,7 @@ public class CursorRenderer {
         }
         var scale = MinecraftClient.getInstance().getWindow().getScaleFactor();
         //? if < 1.21.5
-        RenderSystem.depthFunc(GL11.GL_ALWAYS);
+        /*RenderSystem.depthFunc(GL11.GL_ALWAYS);*/
         var identifier = config.identifier;
         var x = (int) Math.round(mouseX - config.size * config.x / scale);
         var y = (int) Math.round(mouseY - config.size * config.y / scale);
@@ -33,15 +33,15 @@ public class CursorRenderer {
         var textureWidth = (int) (config.size / scale);
         var textureHeight = (int) (config.size / scale);
         //? if < 1.21.3 {
-        context.drawTexture(identifier,x,y,u,v,width,height,textureWidth,textureHeight);
-         //?} else if < 1.21.6 {
+        /*context.drawTexture(identifier,x,y,u,v,width,height,textureWidth,textureHeight);
+         *///?} else if < 1.21.6 {
         /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, identifier, x, y, u, v, width, height, textureWidth, textureHeight);
         *///?} else {
-        /*context.drawTexture(RenderPipelines.GUI_TEXTURED, identifier, x, y, u, v, width, height, textureWidth, textureHeight);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, identifier, x, y, u, v, width, height, textureWidth, textureHeight);
 
-        *///?}
+        //?}
         //? if < 1.21.5
-        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        /*RenderSystem.depthFunc(GL11.GL_LEQUAL);*/
 
         //for debugging
         //context.drawTexture(new Identifier("customcursor","textures/gui/pointer.png"), (int) (mouseX-4), (int) (mouseY-4),0,0,8,8,8,8);

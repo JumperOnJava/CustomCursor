@@ -3,8 +3,10 @@ package io.github.jumperonjava.customcursor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.jumperonjava.customcursor.util.*;
 //? if >= 1.21.6
-/*import net.minecraft.client.gl.RenderPipelines;*/
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.cursor.Cursor;
+import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -19,6 +21,7 @@ import java.util.function.Function;
 public class CursorEditScreen extends Screen {
     private final Consumer<CursorSettings> onSuccess;
     private final CursorSettings targetConfig;
+    private final CursorSettings.CursorSprite targetCursor;
     private final Screen parent;
 
     public CursorEditScreen(Screen parent, CursorSettings cursorConfig, Consumer<CursorSettings> onSuccess) {
@@ -103,15 +106,15 @@ public class CursorEditScreen extends Screen {
         var maxsize = 256.;
         var imagePathField = new TextFieldWidget(client.textRenderer, columns[0], rows[4], twoColumnSizePadding, rowSizePadding, Text.empty());
         var sizeSlider = new SliderWidget(columns[0], rows[1], twoColumnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.size"), this.targetConfig.size,0, maxsize,  256);
-        var xPosSlider = new SliderWidget(columns[0], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.x"), this.targetConfig.x,0., 1.,  64);
-        var yPosSlider = new SliderWidget(columns[1], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.y"), this.targetConfig.y,0., 1.,  64);
+        var xPosSlider = new SliderWidget(columns[0], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.x"), this.targetCursor.x,0., 1.,  64);
+        var yPosSlider = new SliderWidget(columns[1], rows[2], columnSizePadding, rowSizePadding, Text.translatable("customcursor.edit.y"), this.targetCursor.y,0., 1.,  64);
 
-        xPosSlider.setChangedListener(d -> this.targetConfig.x = (float) (double) d);
-        yPosSlider.setChangedListener(d -> this.targetConfig.y = (float) (double) d);
+        xPosSlider.setChangedListener(d -> this.targetCursor.x = (float) (double) d);
+        yPosSlider.setChangedListener(d -> this.targetCursor.y = (float) (double) d);
         sizeSlider.setChangedListener(d -> this.targetConfig.size = (int) (double) d);
 
         imagePathField.setMaxLength(512);
-        imagePathField.setText(this.targetConfig.identifier.toString());
+        imagePathField.setText(this.targetCursor.identifier.toString());
         imagePathField.setChangedListener((s) -> {
             try {
                 setIdentifier(Identifier.tryParse(s));
@@ -130,10 +133,16 @@ public class CursorEditScreen extends Screen {
         addDrawableChild(yPosSlider);
         addDrawable(this::renderCheckerboard);
         addDrawable(this::renderPreview);
+        addDrawable(this::testcursor);
+    }
+
+    float time = 0;
+    private void testcursor(DrawContext context, int mouseX, int mouseY, float delta) {
+        context.setCursor(StandardCursors.CROSSHAIR);
     }
 
     private void setIdentifier(Identifier identifier) {
-        this.targetConfig.identifier = identifier;
+        this.targetCursor.identifier = identifier;
     }
 
     private void confirm(ButtonWidget buttonWidget) {
@@ -147,21 +156,20 @@ public class CursorEditScreen extends Screen {
 
 
     //? if <= 1.20.1 {
-    @Override
+    /*@Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
     }
-    //?}
+    *///?}
 
     private void renderPreview(DrawContext context, int mouseX, int mouseY, float delta){
-
-        VersionFunctions.drawTexture(context, this.targetConfig.identifier, previewPosX, previewPosY, 0, 0, previewSize, previewSize, previewSize, previewSize);
+        VersionFunctions.drawTexture(context, this.targetCursor.identifier, previewPosX, previewPosY, 0, 0, previewSize, previewSize, previewSize, previewSize);
         VersionFunctions.drawTexture(
                 context,
                 Identifier.of("customcursor", "textures/gui/pointer.png"),
-                (int) (previewPosX + this.targetConfig.x * previewSize) - 4,
-                (int) (previewPosY + this.targetConfig.y * previewSize) - 4,
+                (int) (previewPosX + this.targetCursor.x * previewSize) - 4,
+                (int) (previewPosY + this.targetCursor.y * previewSize) - 4,
                 0, 0,
                 8, 8,
                 8, 8);
@@ -203,7 +211,7 @@ public class CursorEditScreen extends Screen {
 
         //? if < 1.21.6 {
         
-        context.getMatrices().push();
+        /*context.getMatrices().push();
         context.getMatrices().translate(
                 (previewPosX + MathHelper.floorMod(bgx, cellsize) - cellsize),
                 (previewPosY + MathHelper.floorMod(bgy, cellsize) - cellsize),
@@ -220,10 +228,10 @@ public class CursorEditScreen extends Screen {
 
         context.getMatrices().pop();
         context.disableScissor();
-        //?} else {
+        *///?} else {
 
 
-        /*context.getMatrices().pushMatrix();
+        context.getMatrices().pushMatrix();
         context.getMatrices().translate(
                 (previewPosX + MathHelper.floorMod(bgx, cellsize) - cellsize),
                 (previewPosY + MathHelper.floorMod(bgy, cellsize) - cellsize));
@@ -242,7 +250,7 @@ public class CursorEditScreen extends Screen {
         context.getMatrices().popMatrix();
         context.disableScissor();
 
-        *///?}
+        //?}
     }
 
     public static CursorEditScreen createCursorEditScreen(Screen parent) {
