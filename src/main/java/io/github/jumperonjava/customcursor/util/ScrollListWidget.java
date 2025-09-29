@@ -2,7 +2,9 @@ package io.github.jumperonjava.customcursor.util;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
+//? if > 1.21.8 {
+/*import net.minecraft.client.gui.Click;
+*///?}
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;

@@ -2,8 +2,6 @@ package io.github.jumperonjava.customcursor;
 
 
 import com.google.gson.Gson;
-import net.minecraft.client.gui.cursor.Cursor;
-import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.util.Identifier;
 
 import java.util.Objects;
@@ -12,18 +10,22 @@ public class CursorSettings implements Cloneable{
     public int size=32;
     public boolean enabled=false;
 
-    CursorSprite pointer = new CursorSprite(1,9, 0, false,Identifier.ofVanilla("textures/item/diamond_sword.png"));
-    CursorSprite arrow = new CursorSprite(0,0, 0, false,Identifier.ofVanilla("textures/item/arrow.png"));
-    CursorSprite ibeam = new CursorSprite(0,0, 0, false,Identifier.ofVanilla("textures/item/ink_sac.png"));
-    CursorSprite crosshair = new CursorSprite(0,0, 0, false,Identifier.ofVanilla("textures/item/lead.png"));
-    CursorSprite pointing_hand = new CursorSprite(0,0, 0, false,Identifier.ofVanilla("textures/item/rabbit_foot.png"));
-    CursorSprite resize_ns = new CursorSprite(0,0, 0, false,Identifier.ofVanilla("textures/item/golden_hoe.png"));
-    CursorSprite resize_ew = new CursorSprite(0,0, 0, false,Identifier.ofVanilla("textures/item/copper_hoe.png"));
-    CursorSprite resize_all = new CursorSprite(0,0, 0, false,Identifier.ofVanilla("textures/item/nether_star.png"));
-    CursorSprite not_allowed = new CursorSprite(0,0, 0, false,Identifier.ofVanilla("textures/item/barrier.png"));
+    CursorSprite pointer = new CursorSprite(1,9, 0, false,Identifier.of("minecraft", "textures/item/diamond_sword.png"));
+    CursorSprite arrow = new CursorSprite(0,0, 0, false,Identifier.of("minecraft", "textures/item/arrow.png"));
+    CursorSprite ibeam = new CursorSprite(0,0, 0, false,Identifier.of("minecraft", "textures/item/ink_sac.png"));
+    CursorSprite crosshair = new CursorSprite(0,0, 0, false,Identifier.of("minecraft", "textures/item/lead.png"));
+    CursorSprite pointing_hand = new CursorSprite(0,0, 0, false,Identifier.of("minecraft", "textures/item/rabbit_foot.png"));
+    CursorSprite resize_ns = new CursorSprite(0,0, 0, false,Identifier.of("minecraft", "textures/item/golden_hoe.png"));
+    CursorSprite resize_ew = new CursorSprite(0,0, 0, false,Identifier.of("minecraft", "textures/item/copper_hoe.png"));
+    CursorSprite resize_all = new CursorSprite(0,0, 0, false,Identifier.of("minecraft", "textures/item/nether_star.png"));
+    CursorSprite not_allowed = new CursorSprite(0,0, 0, false,Identifier.of("minecraft", "textures/item/barrier.png"));
 
     public CursorSettings clone() {
         return new Gson().fromJson(new Gson().toJson(this), CursorSettings.class);
+    }
+
+    public CursorSprite currentCursor() {
+        return pointer;
     }
 
     public static final class CursorSprite {

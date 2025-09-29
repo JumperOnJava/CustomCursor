@@ -5,8 +5,6 @@ import io.github.jumperonjava.customcursor.util.*;
 //? if >= 1.21.6
 /*import net.minecraft.client.gl.RenderPipelines;*/
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.cursor.Cursor;
-import net.minecraft.client.gui.cursor.StandardCursors;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -29,6 +27,7 @@ public class CursorEditScreen extends Screen {
         this.parent = parent;
         this.onSuccess = onSuccess;
         this.targetConfig = cursorConfig.clone();
+        this.targetCursor = targetConfig.pointer;
     }
 
     @Override
@@ -138,7 +137,7 @@ public class CursorEditScreen extends Screen {
 
     float time = 0;
     private void testcursor(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.setCursor(StandardCursors.CROSSHAIR);
+//        context.setCursor(StandardCursors.CROSSHAIR);
     }
 
     private void setIdentifier(Identifier identifier) {

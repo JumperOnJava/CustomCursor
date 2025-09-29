@@ -23,9 +23,9 @@ public class CursorRenderer {
         var scale = MinecraftClient.getInstance().getWindow().getScaleFactor();
         //? if < 1.21.5
         RenderSystem.depthFunc(GL11.GL_ALWAYS);
-        var identifier = config.identifier;
-        var x = (int) Math.round(mouseX - config.size * config.x / scale);
-        var y = (int) Math.round(mouseY - config.size * config.y / scale);
+        var identifier = config.currentCursor().identifier;
+        var x = (int) Math.round(mouseX - config.size * config.currentCursor().x / scale);
+        var y = (int) Math.round(mouseY - config.size * config.currentCursor().y / scale);
         var u = (float) 0;
         var v = (float) 0;
         var width = (int) (config.size / scale);

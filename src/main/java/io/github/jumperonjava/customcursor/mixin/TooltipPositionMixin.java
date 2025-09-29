@@ -16,7 +16,7 @@ public class TooltipPositionMixin
         var scale = MinecraftClient.getInstance().getWindow().getScaleFactor();
         var cursor = CustomCursorInit.getConfig().pointer.clone();
         cursor.size/=scale;
-        args.set(0,(int)args.get(0) - 6 + (int)(cursor.size * (1-cursor.x)));
-        args.set(1,(int)args.get(1) - (int)(cursor.size * (cursor.y)));
+        args.set(0,(int)args.get(0) - 6 + (int)(cursor.size * (1-cursor.currentCursor().x)));
+        args.set(1,(int)args.get(1) - (int)(cursor.size * (cursor.currentCursor().y)));
     }
 }

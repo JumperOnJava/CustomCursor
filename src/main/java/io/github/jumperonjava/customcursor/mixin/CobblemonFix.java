@@ -32,7 +32,11 @@ public class CobblemonFix {
             locked = true;
             var x = (double) (this.client.getWindow().getWidth() / 2);
             var y = (double) (this.client.getWindow().getHeight() / 2);
-            InputUtil.setCursorParameters(this.client.getWindow(), 212995, x, y);
+            //? if <= 1.21.8 {
+            InputUtil.setCursorParameters(this.client.getWindow().getHandle(), 212995, x, y);
+            //? } else {
+            /*InputUtil.setCursorParameters(this.client.getWindow(), 212995, x, y);
+            *///?}
         } else {
             locked = false;
         }
