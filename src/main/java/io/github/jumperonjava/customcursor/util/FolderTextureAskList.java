@@ -106,12 +106,12 @@ public class FolderTextureAskList extends Screen {
 
     private void refreshListByFilter(String s) {
         lastFilter = s;
-        list.children().clear();
+        list.children.clear();
         //? if < 1.21.4 {
-        list.setScrollAmount(0);
-         //?} else {
-        /*list.setScrollY(0);
-        *///?}
+        /*list.setScrollAmount(0);
+         *///?} else {
+        list.setScrollY(0);
+        //?}
         for (var key : textures) {
             extracted(s, key);
         }
@@ -130,12 +130,12 @@ public class FolderTextureAskList extends Screen {
     }
 
     //? if <= 1.20.1 {
-    @Override
+    /*@Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
     }
-    //?}
+    *///?}
 
     public void success(Identifier ret) {
         onSuccess.accept(ret);

@@ -3,13 +3,16 @@
   "package": "io.github.jumperonjava.customcursor.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-          "CobblemonFix",
-          "LoadFolderTexturesEventMixin",
-          "MouseOptionsScreenMixin",
-          "TooltipPositionMixin",
-          "GameRendererMixin"
+    "CobblemonFix",
+    "GameRendererMixin",
+    "LoadFolderTexturesEventMixin",
+    "MouseOptionsScreenMixin",
+    "TooltipPositionMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "DrawContextMixin"
+  ]
 }

@@ -36,7 +36,7 @@ public class SliderWidget extends net.minecraft.client.gui.widget.SliderWidget {
     }
 
     @Override
-    protected void updateMessage() {
+    public void updateMessage() {
         var mappedValue = getMappedValue();
         var stringValue = mappedValue == (int)mappedValue
                 ? String.valueOf((int)mappedValue)

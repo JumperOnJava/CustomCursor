@@ -1,7 +1,7 @@
 //? if neoforge {
 /*package io.github.jumperonjava.customcursor.neoforge;
 
-import io.github.jumperonjava.customcursor.CursorEditScreen;
+import io.github.jumperonjava.customcursor.editor.CursorEditScreen;
 import io.github.jumperonjava.customcursor.CustomCursorInit;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;

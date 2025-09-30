@@ -3,7 +3,7 @@ package io.github.jumperonjava.customcursor.fabric;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import io.github.jumperonjava.customcursor.CursorEditScreen;
+import io.github.jumperonjava.customcursor.editor.CursorEditScreen;
 
 public class ModMenuIntegration implements ModMenuApi {
     public ConfigScreenFactory<?> getModConfigScreenFactory() {

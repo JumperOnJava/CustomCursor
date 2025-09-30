@@ -1,19 +1,20 @@
 package io.github.jumperonjava.customcursor;
 
+import io.github.jumperonjava.customcursor.util.VersionFunctions;
 import net.minecraft.client.MinecraftClient;
 //? if >= 1.21.6 {
-/*import net.minecraft.client.gl.RenderPipelines;
-*///?} else {
+import net.minecraft.client.gl.RenderPipelines;
+//?} else {
+/*import net.minecraft.client.render.RenderLayer;
 import com.mojang.blaze3d.systems.RenderSystem;
-//?}
+*///?}
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 public class CursorRenderer {
     public static void render(DrawContext context, int mouseX, int mouseY, float donotuse_delta) {
-        var config = CustomCursorInit.getConfig().pointer;
+        var config = CustomCursorInit.getConfig().settings;
         if (MinecraftClient.getInstance().currentScreen == null)
             return;
         if (!config.enabled) {
@@ -22,26 +23,39 @@ public class CursorRenderer {
         }
         var scale = MinecraftClient.getInstance().getWindow().getScaleFactor();
         //? if < 1.21.5
-        RenderSystem.depthFunc(GL11.GL_ALWAYS);
-        var identifier = config.currentCursor().identifier;
-        var x = (int) Math.round(mouseX - config.size * config.currentCursor().x / scale);
-        var y = (int) Math.round(mouseY - config.size * config.currentCursor().y / scale);
+        /*RenderSystem.depthFunc(GL11.GL_ALWAYS);*/
+
+        var sprite = config.arrow;
+
+        //? if > 1.21.8 {
+        var contextCursor = context.cursor;
+        sprite = config.cursorToSprite(contextCursor);
+        //?}
+
+        var identifier = sprite.identifier;
+
+        var x = (int) Math.round(mouseX - config.size * sprite.x / scale);
+        var y = (int) Math.round(mouseY - config.size * sprite.y / scale);
         var u = (float) 0;
         var v = (float) 0;
         var width = (int) (config.size / scale);
         var height = (int) (config.size / scale);
         var textureWidth = (int) (config.size / scale);
         var textureHeight = (int) (config.size / scale);
-        //? if < 1.21.3 {
-        context.drawTexture(identifier,x,y,u,v,width,height,textureWidth,textureHeight);
-         //?} else if < 1.21.6 {
-        /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, identifier, x, y, u, v, width, height, textureWidth, textureHeight);
-        *///?} else {
-        /*context.drawTexture(RenderPipelines.GUI_TEXTURED, identifier, x, y, u, v, width, height, textureWidth, textureHeight);
 
-        *///?}
+        VersionFunctions.pushMatrix(context);
+        VersionFunctions.rotateAbout(context, (float) Math.toRadians(sprite.rotation), x+ (float) textureWidth /2, y+ (float) textureHeight /2);
+        //? if < 1.21.3 {
+        /*context.drawTexture(identifier,x,y,u,v,width,height,textureWidth * (sprite.mirroredX ? -1:1), textureHeight* (sprite.mirroredY ? -1:1));
+         *///?} else if < 1.21.6 {
+        /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, identifier, x, y, u, v, width, height, textureWidth * (sprite.mirroredX ? -1:1), textureHeight* (sprite.mirroredY ? -1:1));
+        *///?} else {
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, identifier, x, y, u, v, width, height, textureWidth * (sprite.mirroredX ? -1:1), textureHeight* (sprite.mirroredY ? -1:1));
+        //?}
+        VersionFunctions.popMatrix(context);
+
         //? if < 1.21.5
-        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        /*RenderSystem.depthFunc(GL11.GL_LEQUAL);*/
 
         //for debugging
         //context.drawTexture(new Identifier("customcursor","textures/gui/pointer.png"), (int) (mouseX-4), (int) (mouseY-4),0,0,8,8,8,8);

@@ -1,14 +1,9 @@
 package io.github.jumperonjava.customcursor.mixin;
 
-import io.github.jumperonjava.customcursor.CursorConfigStorage;
-import io.github.jumperonjava.customcursor.CursorEditScreen;
-import io.github.jumperonjava.customcursor.CustomCursorInit;
+import io.github.jumperonjava.customcursor.editor.CursorEditScreen;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.gui.screen.option.KeybindsScreen;
-import net.minecraft.client.gui.screen.option.MouseOptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +22,7 @@ public abstract class MouseOptionsScreenMixin extends GameOptionsScreen {
     }
 
     //? if < 1.21 {
-    @Inject(method = "init",at = @At("HEAD"),locals = LocalCapture.CAPTURE_FAILHARD)
+    /*@Inject(method = "init",at = @At("HEAD"),locals = LocalCapture.CAPTURE_FAILHARD)
     void inject(CallbackInfo ci){
         int k = this.height / 6 - 12 + 24 * 3;
         var cursorEditScreenButton = new ButtonWidget.Builder(Text.translatable("customcursor.openbutton"),(buttonWidget)->{
@@ -52,8 +47,8 @@ public abstract class MouseOptionsScreenMixin extends GameOptionsScreen {
     int injected(int k){
         return k+24;
     }
-    //?} else {
-        /*@Inject(method = "addOptions", at = @At("TAIL"))
+    *///?} else {
+        @Inject(method = "addOptions", at = @At("TAIL"))
         public void addOptions(CallbackInfo ci) {
             this.body.addWidgetEntry
                             (
@@ -63,5 +58,5 @@ public abstract class MouseOptionsScreenMixin extends GameOptionsScreen {
                                             (buttonWidget) -> client.setScreen(CursorEditScreen.createCursorEditScreen(this))).dimensions(0,0,0,0).build()
                             );
         }
-    *///?}
+    //?}
 }
