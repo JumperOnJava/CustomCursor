@@ -63,7 +63,12 @@ dependencies {
 }
 
 loom {
-    accessWidenerPath = rootProject.file("src/main/resources/customcursor.accesswidener")
+    //if there is no aw_version property for version it defaults to 1.20.1
+    //added because i did not want to add this property for almost 20 versions
+    //since 1.21.9 it is defined
+    val awVersion = (findProperty("mod.aw_version") as String?) ?: "1.20.1"
+
+    accessWidenerPath = rootProject.file("src/main/resources/aw/customcursor.${awVersion}.accesswidener")
 
     decompilers {
         get("vineflower").apply { // Adds names to lambdas - useful for mixins

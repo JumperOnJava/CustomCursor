@@ -1,4 +1,4 @@
-package io.github.jumperonjava.customcursor.util;
+package io.github.jumperonjava.customcursor.editor;
 
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;

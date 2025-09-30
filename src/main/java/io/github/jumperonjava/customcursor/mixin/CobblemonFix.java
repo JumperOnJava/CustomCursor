@@ -21,10 +21,10 @@ public class CobblemonFix {
 
     @Inject(method = "render", at = @At("HEAD"))
         //? if < 1.21 {
-        /*void lock(DrawContext context, float tickDelta, CallbackInfo ci){
-         *///?} else {
-    void lock(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        //?}
+        void lock(DrawContext context, float tickDelta, CallbackInfo ci){
+         //?} else {
+    /*void lock(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+        *///?}
         if (client.currentScreen == null) {
             if (locked)
                 return;
@@ -33,10 +33,10 @@ public class CobblemonFix {
             var x = (double) (this.client.getWindow().getWidth() / 2);
             var y = (double) (this.client.getWindow().getHeight() / 2);
             //? if <= 1.21.8 {
-            /*InputUtil.setCursorParameters(this.client.getWindow().getHandle(), 212995, x, y);
-            *///?} else {
-            InputUtil.setCursorParameters(this.client.getWindow(), 212995, x, y);
-            //?}
+            InputUtil.setCursorParameters(this.client.getWindow().getHandle(), 212995, x, y);
+            //?} else {
+            /*InputUtil.setCursorParameters(this.client.getWindow(), 212995, x, y);
+            *///?}
         } else {
             locked = false;
         }

@@ -3,28 +3,20 @@ package io.github.jumperonjava.customcursor.editor;
 import io.github.jumperonjava.customcursor.CursorConfigStorage;
 import io.github.jumperonjava.customcursor.CursorSettings;
 import io.github.jumperonjava.customcursor.CustomCursorInit;
-import io.github.jumperonjava.customcursor.util.FolderTextureAskList;
-import io.github.jumperonjava.customcursor.util.SliderWidget;
-import io.github.jumperonjava.customcursor.util.VersionFunctions;
 //? if > 1.21.8 {
-import net.minecraft.client.gui.Click;
-//?}
-
-//? if <= 1.21.5 {
-/*import com.mojang.blaze3d.systems.RenderSystem;
+/*import net.minecraft.client.gui.Click;
 *///?}
 
-//? if >= 1.21.5 {
-import net.minecraft.client.gl.RenderPipelines;
+//? if <= 1.21.5 {
+import com.mojang.blaze3d.systems.RenderSystem;
 //?}
+
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec2f;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -52,19 +44,11 @@ public class CursorEditScreen extends Screen {
     private int centerX;
     private int centerY;
 
-    int previewSize = 128;
-    int previewPosX;
-    int previewPosY;
 
     @Override
     protected void init() {
-
-
         centerX = width / 2;
         centerY = height / 2;
-
-        previewPosX = (width - previewSize) / 2;
-        previewPosY = centerY;
 
         super.init();
 
@@ -83,8 +67,8 @@ public class CursorEditScreen extends Screen {
             buttonWidget.setMessage(dynamicText.apply(this.targetConfig.dynamicEnabled));
         });
 
-        var confrmButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.confirm"), this::confirm);
-        var cancelButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.cancel"), (f) -> close());
+        var save__Button = new ButtonWidget.Builder(Text.translatable("customcursor.edit.save"), this::save);
+        var cancelButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.exit"), (f) -> close());
         var folderButton = new ButtonWidget.Builder(Text.translatable("customcursor.edit.folder"), (b) -> {
             FolderTextureAskList.ask(
                     new FolderTextureAskList(
@@ -100,16 +84,17 @@ public class CursorEditScreen extends Screen {
         var rowCount = 4;
         var columnCount = 2;
 
+        int previewSize = 128;
         var startColumnPos = centerX - (columnCount * columnSize) / 2;
-        var startRowPos = centerY - rowCount * rowSize;
+        var startRowPos = centerY - (rowCount * rowSize + previewSize)/2;
 
-        var rows = new int[rowCount];
+        var rows = new int[100];
         var columns = new int[columnCount];
 
         var padding = 2;
         var sizePadding = padding * 2;
 
-        for (int i = 0; i < rowCount; i++) {
+        for (int i = 0; i < 100; i++) {
             rows[i] = startRowPos + rowSize * i + padding;
         }
         for (int i = 0; i < columnCount; i++) {
@@ -120,15 +105,18 @@ public class CursorEditScreen extends Screen {
         int twoColumnSizePadding = columnSize * 2 - sizePadding;
         int rowSizePadding = rowSize - sizePadding;
 
+        int previewPosX = (width - previewSize) / 2;
+        int previewPosY = rows[rowCount];
+
         //? if <= 1.21.8 {
-        /*toggleWidget = toggleWidget.dimensions(columns[0], rows[0], twoColumnSizePadding, rowSizePadding);
+        toggleWidget = toggleWidget.dimensions(columns[0], rows[0], twoColumnSizePadding, rowSizePadding);
         dynmicWidget = dynmicWidget.dimensions(10000, 10000, 20, 20);
-        *///?} else {
-        toggleWidget = toggleWidget.dimensions(columns[0], rows[0], columnSizePadding, rowSizePadding);
+        //?} else {
+        /*toggleWidget = toggleWidget.dimensions(columns[0], rows[0], columnSizePadding, rowSizePadding);
         dynmicWidget = dynmicWidget.dimensions(columns[1], rows[0], columnSizePadding, rowSizePadding);
-        //?}
+        *///?}
         folderButton = folderButton.dimensions(columns[0] + twoColumnSizePadding - rowSizePadding, rows[2], rowSizePadding, rowSizePadding);
-        confrmButton = confrmButton.dimensions(columns[0], rows[3], columnSizePadding, rowSizePadding);
+        save__Button = save__Button.dimensions(columns[0], rows[3], columnSizePadding, rowSizePadding);
         cancelButton = cancelButton.dimensions(columns[1], rows[3], columnSizePadding, rowSizePadding);
 
         var maxsize = 256.;
@@ -153,7 +141,7 @@ public class CursorEditScreen extends Screen {
 
         addDrawableChild(toggleWidget.build());
         addDrawableChild(dynmicWidget.build());
-        addDrawableChild(confrmButton.build());
+        addDrawableChild(save__Button.build());
         addDrawableChild(cancelButton.build());
         addDrawableChild(folderButton.build());
         addDrawableChild(imagePathField);
@@ -173,7 +161,7 @@ public class CursorEditScreen extends Screen {
             int count = 0;
         };
         //? if > 1.21.8 {
-        CursorSettings.cursorOrder.forEach((key) -> {
+        /*CursorSettings.cursorOrder.forEach((key) -> {
             var value = this.targetConfig.allCursors().get(key);
             final int index = ref.count;
 
@@ -217,7 +205,7 @@ public class CursorEditScreen extends Screen {
 
             ref.count++;
         });
-        //?} else {
+        *///?} else {
 
         //?}
 
@@ -250,7 +238,7 @@ public class CursorEditScreen extends Screen {
         addDrawableChild(rotateCW_builder.build());
         addDrawableChild(mirror_builder.build());
 
-        addDrawable(this::renderCheckerboard);
+        addDrawable(new BackgroundCheckerboard(this, previewPosX, previewPosY, previewSize));
         addDrawableChild(previewWidget);
         addDrawable(this::testcursor);
     }
@@ -266,13 +254,12 @@ public class CursorEditScreen extends Screen {
         this.targetCursor.identifier = identifier;
     }
 
-    private void confirm(ButtonWidget buttonWidget) {
+    private void save(ButtonWidget buttonWidget) {
         try {
             onSuccess.accept(targetConfig);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.close();
     }
 
     private void dynamic(ButtonWidget buttonWidget) {
@@ -281,108 +268,34 @@ public class CursorEditScreen extends Screen {
 
 
     //? if <= 1.20.1 {
-    /*@Override
+    @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
     }
-    *///?}
+    //?}
 
     //? if <= 1.21.8 {
-    /*@Override
+    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         previewWidget.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
-    *///?} else {
-    @Override
+    //?} else {
+    /*@Override
     public boolean mouseDragged(Click click, double offsetX, double offsetY) {
         previewWidget.mouseDragged(click, offsetX, offsetY);
         return super.mouseDragged(click, offsetX, offsetY);
     }
-    //?}
+    *///?}
 
-    private float bgx = 0, bgy = 0, color;
-
-    private void renderCheckerboard(DrawContext context, int mouseX, int mouseY, float delta) {
-        //generates slowly changing pastel colors for backround
-        color += delta * 0.05f;
-        var n = 2;
-        var color1 = VersionFunctions.ColorHelper.getArgb(255,
-                (int) (128 + 64 * Math.pow(Math.sin(color + 0 * Math.PI / 3), n)),
-                (int) (128 + 64 * Math.pow(Math.sin(color + 2 * Math.PI / 3), n)),
-                (int) (128 + 64 * Math.pow(Math.sin(color + 4 * Math.PI / 3), n))
-        );
-        var color2 = VersionFunctions.ColorHelper.getArgb(255,
-                (int) ((192 + 63 * Math.pow(Math.cos(color + 0 * Math.PI / 3), n))),
-                (int) ((192 + 63 * Math.pow(Math.cos(color + 2 * Math.PI / 3), n))),
-                (int) ((192 + 63 * Math.pow(Math.cos(color + 4 * Math.PI / 3), n)))
-        );
-
-        float r = VersionFunctions.ColorHelper.getRed(color1) / 255f;
-        float g = VersionFunctions.ColorHelper.getGreen(color1) / 255f;
-        float b = VersionFunctions.ColorHelper.getBlue(color1) / 255f;
-
-
-        var vec = new Vec2f(mouseX - (previewPosX + previewSize / 2f), mouseY - (previewPosY + previewSize / 2f)).normalize().multiply(delta);
-        bgx += vec.x;
-        bgy += vec.y;
-
-        context.fill(previewPosX, previewPosY, previewPosX + previewSize, previewPosY + previewSize, color2);
-        context.enableScissor(previewPosX, previewPosY, previewPosX + previewSize, previewPosY + previewSize);
-
-
-        var cellsize = previewSize / 8;
-
-
-        //? if < 1.21.6 {
-
-        /*context.getMatrices().push();
-        context.getMatrices().translate(
-                (previewPosX + MathHelper.floorMod(bgx, cellsize) - cellsize),
-                (previewPosY + MathHelper.floorMod(bgy, cellsize) - cellsize),
-                0);
-        RenderSystem.setShaderColor(r, g, b, 255);
-
-        int checkerRenderSize = previewSize + cellsize;
-        VersionFunctions.drawTexture(context, Identifier.of("customcursor", "textures/gui/backgroundcheckerboard.png"),
-                0,
-                0,
-                0,
-                0, checkerRenderSize, checkerRenderSize, checkerRenderSize, checkerRenderSize);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-
-        context.getMatrices().pop();
-        context.disableScissor();
-        *///?} else {
-
-
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(
-                (previewPosX + MathHelper.floorMod(bgx, cellsize) - cellsize),
-                (previewPosY + MathHelper.floorMod(bgy, cellsize) - cellsize));
-
-
-        int color = VersionFunctions.ColorHelper.getArgb(255, (int) (r * 255), (int) (g * 255), (int) (b * 255));
-
-        int checkerRenderSize = previewSize + cellsize;
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("customcursor", "textures/gui/backgroundcheckerboard.png"),
-                0,
-                0,
-                0,
-                0, checkerRenderSize, checkerRenderSize, checkerRenderSize, checkerRenderSize, color);
-
-        context.getMatrices().popMatrix();
-        context.disableScissor();
-
-        //?}
-    }
 
     public static CursorEditScreen createCursorEditScreen(Screen parent) {
         return new CursorEditScreen(parent, CustomCursorInit.getConfig().settings, c -> {
             var cfg = new CursorConfigStorage();
-            cfg.settings = c;
+            cfg.settings = c.clone();
             CustomCursorInit.setConfig(cfg);
         });
     }
+
 }

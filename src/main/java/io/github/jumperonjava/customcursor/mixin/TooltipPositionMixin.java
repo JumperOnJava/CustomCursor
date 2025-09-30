@@ -21,9 +21,9 @@ public class TooltipPositionMixin
         var config = CustomCursorInit.getConfig().settings;
         var sprite = config.arrow;
         //? if > 1.21.8 {
-        var contextCursor = CursorSettings.globalCursor;
+        /*var contextCursor = CursorSettings.globalCursor;
         sprite = config.cursorToSprite(contextCursor);
-        //?}
+        *///?}
 
 
         args.set(0,(int)args.get(0) - 6 + (int)(cursor.size * (1-sprite.x)));

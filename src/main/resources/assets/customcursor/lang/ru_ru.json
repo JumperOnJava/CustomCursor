@@ -1,6 +1,5 @@
 {
-  "customcursor.edit.confirm": "Подтвердить",
-  "customcursor.edit.cancel": "Отменить",
+  "customcursor.edit.exit": "Save",
   "customcursor.edit.x": "Сдвиг X",
   "customcursor.edit.y": "Сдвиг Y",
   "customcursor.edit.size": "Размер",
@@ -11,5 +10,17 @@
   "customcursor.folder.openfolder": "Папка с курсорами",
   "customcursor.folder.accept": "Подтвердить",
   "customcursor.folder.cancel": "Отменить",
-  "customcursor.folder.selected": "Выбранная текстура"
+  "customcursor.folder.selected": "Выбранная текстура",
+
+  "customcursor.edit.save": "Применить",
+  "customcursor.edit.dynamic.true": "Динамический курсор",
+  "customcursor.edit.dynamic.false": "Статический курсор",
+  "customcursor.cursortype.arrow": "Курсор",
+  "customcursor.cursortype.ibeam": "Текст",
+  "customcursor.cursortype.crosshair": "Прицел",
+  "customcursor.cursortype.pointing_hand": "Указатель",
+  "customcursor.cursortype.resize_ns": "Сдвиг ↕",
+  "customcursor.cursortype.resize_ew": "Сдвиг ↔",
+  "customcursor.cursortype.resize_all": "Сдвиг ✥",
+  "customcursor.cursortype.not_allowed": "Запрет"
 }

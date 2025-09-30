@@ -1,14 +1,15 @@
-package io.github.jumperonjava.customcursor.util;
+package io.github.jumperonjava.customcursor.editor;
 
+
+//? if <= 1.21.5 {
 import com.mojang.blaze3d.systems.RenderSystem;
+//?}
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
-import org.apache.commons.lang3.StringEscapeUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,10 +73,10 @@ public class TextureFolder {
         // Move the RenderSystem.recordRenderCall out of the forEach loop
 
         //? if < 1.21.5
-        /*RenderSystem.recordRenderCall(() -> {*/
+        RenderSystem.recordRenderCall(() -> {
             ONLY_RENDERTHREAD_register(onFinishedCallback, toRegister);
         //? if < 1.21.5
-        /*});*/
+        });
     }
 
     private void ONLY_RENDERTHREAD_register(Runnable onFinishedCallback, List<Path> toRegister) {
@@ -97,10 +98,10 @@ public class TextureFolder {
         });
         textureMap.forEach((identifier, nativeImage) -> {
             //? if < 1.21.5 {
-            /*var texture = new NativeImageBackedTexture(nativeImage);
-            *///?} else {
-            var texture = new NativeImageBackedTexture(identifier::toString,nativeImage);
-            //?}
+            var texture = new NativeImageBackedTexture(nativeImage);
+            //?} else {
+            /*var texture = new NativeImageBackedTexture(identifier::toString,nativeImage);
+            *///?}
             tman.registerTexture(identifier, texture);
             textures.add(identifier);
         });

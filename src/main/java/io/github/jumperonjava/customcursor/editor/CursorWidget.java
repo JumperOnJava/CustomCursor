@@ -1,5 +1,5 @@
 //? if > 1.21.8 {
-package io.github.jumperonjava.customcursor.editor;
+/*package io.github.jumperonjava.customcursor.editor;
 
 import io.github.jumperonjava.customcursor.CursorSettings;
 import io.github.jumperonjava.customcursor.util.VersionFunctions;
@@ -31,11 +31,13 @@ public class CursorWidget implements Drawable, Element, Selectable {
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         context.getMatrices().pushMatrix();
         context.getMatrices().rotateAbout((float) Math.toRadians(sprite.rotation), x + (float) size / 2, y + (float) size / 2);
-        VersionFunctions.drawTexture(context, sprite.identifier, x, y, 0, 0, size, size, size * (sprite.mirroredX ? -1 : 1), size * (sprite.mirroredY ? -1 : 1));
-        context.getMatrices().popMatrix();
         if (isMouseOver(mouseX, mouseY)) {
             context.setCursor(CursorSettings.cursors().get(key));
+            context.fill(x,y,x+size,y+size, 0x7f000000);
         }
+        VersionFunctions.drawTexture(context, sprite.identifier, x, y, 0, 0, size, size, size * (sprite.mirroredX ? -1 : 1), size * (sprite.mirroredY ? -1 : 1));
+        context.getMatrices().popMatrix();
+
     }
 
     @Override
@@ -80,4 +82,4 @@ public class CursorWidget implements Drawable, Element, Selectable {
 
     }
 }
-//?}
+*///?}

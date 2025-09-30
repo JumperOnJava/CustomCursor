@@ -1,10 +1,7 @@
-package io.github.jumperonjava.customcursor.util;
+package io.github.jumperonjava.customcursor.editor;
 
+import io.github.jumperonjava.customcursor.util.VersionFunctions;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.util.Identifier;
 
 public class TextureWidget{

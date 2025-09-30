@@ -1,0 +1,6 @@
+accessWidener v2 named
+accessible method net/minecraft/client/gui/screen/Screen remove (Lnet/minecraft/client/gui/Element;)V
+accessible field net/minecraft/client/gui/screen/Screen drawables Ljava/util/List;
+accessible method net/minecraft/client/gui/widget/SliderWidget setValue (D)V
+accessible field net/minecraft/client/gui/widget/EntryListWidget children Ljava/util/List;
+

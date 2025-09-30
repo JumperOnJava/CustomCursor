@@ -1,6 +1,6 @@
 //THIS IS STUB FILE
 //? if <= 1.21.8 {
-/*package net.minecraft.client.gui.cursor;
+package net.minecraft.client.gui.cursor;
 
 public class StandardCursors {
     public static final Cursor ARROW = new Cursor();
@@ -12,4 +12,4 @@ public class StandardCursors {
     public static final Cursor RESIZE_ALL = new Cursor();
     public static final Cursor NOT_ALLOWED = new Cursor();
 }
-*///?}
+//?}

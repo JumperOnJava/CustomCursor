@@ -34,7 +34,7 @@ public class PreviewWidget implements Drawable, Element, Selectable {
     }
 
     //? if <= 1.21.8 {
-    /*@Override
+    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         return update(mouseX, mouseY);
     }
@@ -43,8 +43,8 @@ public class PreviewWidget implements Drawable, Element, Selectable {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return update(mouseX, mouseY);
     }
-    *///?} else {
-    @Override
+    //?} else {
+    /*@Override
     public boolean mouseDragged(Click click, double xdelta, double ydelta) {
         return update(click.x(), click.y());
     }
@@ -53,7 +53,7 @@ public class PreviewWidget implements Drawable, Element, Selectable {
     public boolean mouseClicked(Click click, boolean doubled) {
         return update(click.x(), click.y());
     }
-    //?}
+    *///?}
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {

@@ -3,7 +3,7 @@ package io.github.jumperonjava.customcursor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.jumperonjava.customcursor.util.FileReadWrite;
-import io.github.jumperonjava.customcursor.util.TextureFolder;
+import io.github.jumperonjava.customcursor.editor.TextureFolder;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

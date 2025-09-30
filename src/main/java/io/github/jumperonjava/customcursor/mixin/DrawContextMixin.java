@@ -1,7 +1,7 @@
 package io.github.jumperonjava.customcursor.mixin;
 
 //? if > 1.21.8 {
-import io.github.jumperonjava.customcursor.CursorSettings;
+/*import io.github.jumperonjava.customcursor.CursorSettings;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.cursor.Cursor;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,13 +16,13 @@ public class DrawContextMixin {
         CursorSettings.globalCursor = cursor;
     }
 }
-//?} else {
+*///?} else {
 
-/*import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.DrawContext;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(DrawContext.class)
 public class DrawContextMixin {
 
 }
-*///?}
+//?}

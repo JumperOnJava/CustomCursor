@@ -1,6 +1,5 @@
 {
-  "customcursor.edit.confirm": "Підтвердити",
-  "customcursor.edit.cancel": "Відмінити",
+  "customcursor.edit.exit": "Save",
   "customcursor.edit.x": "Зсув по X",
   "customcursor.edit.y": "Зсув по Y",
   "customcursor.edit.size": "Розмір",
@@ -11,5 +10,17 @@
   "customcursor.folder.openfolder": "Папка курсорів",
   "customcursor.folder.accept": "Підтвердити",
   "customcursor.folder.cancel": "Відмінити",
-  "customcursor.folder.selected": "Вибрана текстура"
+  "customcursor.folder.selected": "Вибрана текстура",
+
+  "customcursor.edit.save": "Apply",
+  "customcursor.edit.dynamic.true": "Динамічний курсор",
+  "customcursor.edit.dynamic.false": "Статичний курсор",
+  "customcursor.cursortype.arrow": "Курсор",
+  "customcursor.cursortype.ibeam": "Текст",
+  "customcursor.cursortype.crosshair": "Приціл",
+  "customcursor.cursortype.pointing_hand": "Вказівник",
+  "customcursor.cursortype.resize_ns": "Зсув ↕",
+  "customcursor.cursortype.resize_ew": "Зсув ↔",
+  "customcursor.cursortype.resize_all": "Зсув ✥",
+  "customcursor.cursortype.not_allowed": "Заборона"
 }
