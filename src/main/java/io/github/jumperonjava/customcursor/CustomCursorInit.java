@@ -21,6 +21,18 @@ public class CustomCursorInit
 	private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	public static void entrypoint(Function<String,Boolean> isModLoaded) {
+		//WARNING: DUMB
+		//? if neoforge && = 1.21.5 {
+		/*new Thread(() -> {
+			while(MinecraftClient.getInstance() == null){
+				Thread.yield();
+			}
+			getConfig();
+		}).start();
+		if(1==1){
+			return;
+		}
+		*///?}
 		getConfig();
 	}
 
