@@ -1,10 +1,10 @@
 import java.util.*
 
 plugins {
-    id("dev.architectury.loom")
-    id("architectury-plugin")
-    id("me.modmuss50.mod-publish-plugin")
-    id("com.gradleup.shadow")
+    id("dev.architectury.loom") version "1.13-SNAPSHOT"
+    id("architectury-plugin") version "3.4-SNAPSHOT"
+    id("me.modmuss50.mod-publish-plugin") version "2.2.1"
+    id("com.gradleup.shadow") version "9.3.0"
 }
 
 val minecraft = stonecutter.current.version
@@ -16,10 +16,7 @@ base {
     archivesName.set("${mod.id}-$loader")
 }
 
-architectury.common(stonecutter.tree.branches.mapNotNull {
-    if (stonecutter.current.project !in it) null
-    else it.prop("loom.platform")
-})
+architectury.common(listOf(requireNotNull(prop("loom.platform")) { "Missing 'loom.platform'" }))
 repositories{
     maven("https://maven.neoforged.net/releases/")
 
@@ -33,7 +30,7 @@ dependencies {
 
     if (loader == "fabric") {
         modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader")}")
-        mappings("net.fabricmc:yarn:$minecraft+build.${mod.dep("yarn_build")}:v2")
+        mappings(loom.officialMojangMappings())
         modCompileOnly("com.terraformersmc:modmenu:${mod.dep("modmenu_version")}")
 
         //some features (like automatic resource loading from non vanilla namespaces) work only with fabric API installed

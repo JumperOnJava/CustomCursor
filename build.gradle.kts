@@ -5,10 +5,12 @@ import me.modmuss50.mpp.ReleaseType
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
+    // 26.1+: net.fabricmc.fabric-loom is the non-remapping Loom (no mappings required).
+    // Do not use dev.architectury.loom here; 1.13 still requires a mappings dependency.
     id("net.fabricmc.fabric-loom") version "1.18-SNAPSHOT" apply false
     id("net.neoforged.moddev") version "2.0.147" apply false
-    id("me.modmuss50.mod-publish-plugin")
-    id("com.gradleup.shadow") apply false
+    id("me.modmuss50.mod-publish-plugin") version "2.2.1"
+    id("com.gradleup.shadow") version "9.3.0" apply false
 }
 
 // Exposes this node's ["<mc version>"] section from versions/<mc version>.toml

@@ -34,8 +34,8 @@ stonecutter {
                 versionConfig.buildscript = "build.gradle.kts";
             }
         }
-        fun mc_legacy(version: String, vararg loaders: String) {
-            for (loader in loaders) {
+        fun mc_legacy(loader: String, vararg versions: String) {
+            for (version in versions) {
                 val versionConfig = version("$version-$loader", version);
                 versionConfig.buildscript = "build.legacyarch.gradle.kts";
             }
