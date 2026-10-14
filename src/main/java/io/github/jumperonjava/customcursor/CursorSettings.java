@@ -2,30 +2,29 @@ package io.github.jumperonjava.customcursor;
 
 
 import com.google.gson.Gson;
-import net.minecraft.client.gui.cursor.Cursor;
-import net.minecraft.client.gui.cursor.StandardCursors;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.platform.cursor.CursorType;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class CursorSettings implements Cloneable {
-    public static Cursor globalCursor;
+    public static CursorType globalCursor;
 
-    public int size = 32;
     public boolean enabled = false;
     public boolean dynamicEnabled = true;
 
-
-    public final CursorSprite arrow = new CursorSprite(0.0625f, 0.0625f, 0, false, Identifier.of("customcursor", "cursors/arrow.png"));
-    public final CursorSprite ibeam = new CursorSprite(0.5f, 0.5f, 0, false, Identifier.of("customcursor", "cursors/ibeam.png"));
-    public final CursorSprite crosshair = new CursorSprite(0.5f, 0.5f, 0, false, Identifier.of("customcursor", "cursors/crosshair.png"));
-    public final CursorSprite pointing_hand = new CursorSprite(0.375f, 0, 0, false, Identifier.of("customcursor", "cursors/pointing_hand.png"));
-    public final CursorSprite resize_ns = new CursorSprite(0.5f, 0.5f, 0, false, Identifier.of("customcursor", "cursors/resize_ns.png"));
-    public final CursorSprite resize_ew = new CursorSprite(0.5f, 0.5f, 0, false, Identifier.of("customcursor", "cursors/resize_ew.png"));
-    public final CursorSprite resize_all = new CursorSprite(0.5f, 0.5f, 0, false, Identifier.of("customcursor", "cursors/resize_all.png"));
-    public final CursorSprite not_allowed = new CursorSprite(0.5f, 0.5f, 0, false, Identifier.of("minecraft", "textures/item/barrier.png"));
+    public final CursorSprite arrow = new CursorSprite(0.0625f, 0.0625f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/arrow.png"));
+    public final CursorSprite ibeam = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/ibeam.png"));
+    public final CursorSprite crosshair = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/crosshair.png"));
+    public final CursorSprite pointing_hand = new CursorSprite(0.375f, 32, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/pointing_hand.png"));
+    public final CursorSprite resize_ns = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/resize_ns.png"));
+    public final CursorSprite resize_ew = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/resize_ew.png"));
+    public final CursorSprite resize_all = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/resize_all.png"));
+    public final CursorSprite not_allowed = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("minecraft", "textures/item/barrier.png"));
+    public int size;
 
     public Map<String, CursorSprite> allCursors() {
         return Map.of(
@@ -40,16 +39,16 @@ public class CursorSettings implements Cloneable {
         );
     }
 
-    public static Map<String, Cursor> cursors() {
+    public static Map<String, CursorType> cursors() {
         return Map.of(
-                "arrow", StandardCursors.ARROW,
-                "ibeam", StandardCursors.IBEAM,
-                "crosshair", StandardCursors.CROSSHAIR,
-                "pointing_hand", StandardCursors.POINTING_HAND,
-                "resize_ns", StandardCursors.RESIZE_NS,
-                "resize_ew", StandardCursors.RESIZE_EW,
-                "resize_all", StandardCursors.RESIZE_ALL,
-                "not_allowed", StandardCursors.NOT_ALLOWED
+                "arrow", CursorTypes.ARROW,
+                "ibeam", CursorTypes.IBEAM,
+                "crosshair", CursorTypes.CROSSHAIR,
+                "pointing_hand", CursorTypes.POINTING_HAND,
+                "resize_ns", CursorTypes.RESIZE_NS,
+                "resize_ew", CursorTypes.RESIZE_EW,
+                "resize_all", CursorTypes.RESIZE_ALL,
+                "not_allowed", CursorTypes.NOT_ALLOWED
         );
     }
 
@@ -64,29 +63,27 @@ public class CursorSettings implements Cloneable {
             "not_allowed"
     );
 
-    public CursorSprite cursorToSprite(Cursor cursor) {
-        if(!this.dynamicEnabled){
+    public CursorSprite cursorToSprite(CursorType cursor) {
+        if (!this.dynamicEnabled) {
             return this.arrow;
         }
-        var map = Map.of(
-                Cursor.DEFAULT, arrow,
-                StandardCursors.ARROW, arrow,
-                StandardCursors.IBEAM, ibeam,
-                StandardCursors.CROSSHAIR, crosshair,
-                StandardCursors.POINTING_HAND, pointing_hand,
-                StandardCursors.RESIZE_NS, resize_ns,
-                StandardCursors.RESIZE_EW, resize_ew,
-                StandardCursors.RESIZE_ALL, resize_all,
-                StandardCursors.NOT_ALLOWED, not_allowed
-        );
-        return map.get(cursor);
+        if (cursor == CursorTypes.ARROW) return arrow;
+        if (cursor == CursorTypes.IBEAM) return ibeam;
+        if (cursor == CursorTypes.CROSSHAIR) return crosshair;
+        if (cursor == CursorTypes.POINTING_HAND) return pointing_hand;
+        if (cursor == CursorTypes.RESIZE_NS) return resize_ns;
+        if (cursor == CursorTypes.RESIZE_EW) return resize_ew;
+        if (cursor == CursorTypes.RESIZE_ALL) return resize_all;
+        if (cursor == CursorTypes.NOT_ALLOWED) return not_allowed;
+        return arrow;
     }
 
     public CursorSettings clone() {
         return new Gson().fromJson(new Gson().toJson(this), CursorSettings.class);
     }
 
-    public static final class CursorSprite {
+
+    public static class CursorSprite {
         public float x;
         public float y;
         public float rotation;
@@ -94,11 +91,12 @@ public class CursorSettings implements Cloneable {
         public boolean mirroredY;
         public Identifier identifier;
 
-        public CursorSprite(float x, float y, float rotation, boolean mirror, Identifier identifier) {
+        public CursorSprite(float x, float y, float rotation, boolean mirroredX, boolean mirroredY, Identifier identifier) {
             this.x = x;
             this.y = y;
             this.rotation = rotation;
-            this.mirroredX = mirror;
+            this.mirroredX = mirroredX;
+            this.mirroredY = mirroredY;
             this.identifier = identifier;
         }
 
@@ -129,6 +127,9 @@ public class CursorSettings implements Cloneable {
                     "identifier=" + identifier + ']';
         }
 
+
     }
+
+
 
 }

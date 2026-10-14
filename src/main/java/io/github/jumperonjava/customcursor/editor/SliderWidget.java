@@ -1,17 +1,17 @@
 package io.github.jumperonjava.customcursor.editor;
 
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 import java.util.function.Consumer;
 
 /**
  * Slider widget for general use.
  */
-public class SliderWidget extends net.minecraft.client.gui.widget.SliderWidget {
+public class SliderWidget extends net.minecraft.client.gui.components.AbstractSliderButton {
     private final int steps;
     private Consumer<Double> changedListener;
-    private Text text;
+    private Component text;
     public double min, max;
 
     /**
@@ -26,8 +26,8 @@ public class SliderWidget extends net.minecraft.client.gui.widget.SliderWidget {
      * @param initialValue
      * @param steps
      */
-    public SliderWidget(int x, int y, int width, int height, Text text, double initialValue, double minValue, double maxValue, int steps) {
-        super(x, y, width, height, text, MathHelper.map(initialValue,minValue,maxValue,0,1));
+    public SliderWidget(int x, int y, int width, int height, Component text, double initialValue, double minValue, double maxValue, int steps) {
+        super(x, y, width, height, text, Mth.map(initialValue,minValue,maxValue,0,1));
         this.min=minValue;
         this.max=maxValue;
         this.text=text;
@@ -46,7 +46,7 @@ public class SliderWidget extends net.minecraft.client.gui.widget.SliderWidget {
     private double getMappedValue(){
         var value = this.value;
         value = Math.floor(value*steps)/steps;
-        value = MathHelper.lerp(value, this.min, this.max);
+        value = Mth.lerp(value, this.min, this.max);
         return value;
     }
     @Override
@@ -56,7 +56,12 @@ public class SliderWidget extends net.minecraft.client.gui.widget.SliderWidget {
         changedListener.accept(getMappedValue());
     }
 
-    public void setChangedListener(Consumer<Double> changedListener) {
+    @Override
+    public void setValue(double newValue) {
+        super.setValue(newValue);
+    }
+
+    public void setResponder(Consumer<Double> changedListener) {
         this.changedListener = changedListener;
     }
 }

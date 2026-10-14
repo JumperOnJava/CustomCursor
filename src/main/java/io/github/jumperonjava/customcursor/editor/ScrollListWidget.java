@@ -1,27 +1,20 @@
 package io.github.jumperonjava.customcursor.editor;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 //? if > 1.21.8 {
-/*import net.minecraft.client.gui.Click;
-*///?}
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.input.MouseButtonEvent;
+//?}
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 /**
  * Scroll list widget for general use.
  */
-public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWidget.ScrollListEntry> {
-    public ScrollListWidget(MinecraftClient client, int width, int height, int x, int y, int itemHeight) {
-        //? if < 1.20.4 {
-        super(client,width,height,y,height,itemHeight);
-        //?} else {
-        /*super(client,width,height,y,itemHeight);
-        *///?}
-
-        //? if < 1.20.4
-        setLeftPos(x);
+public class ScrollListWidget extends ObjectSelectionList<ScrollListWidget.ScrollListEntry> {
+    public ScrollListWidget(Minecraft client, int width, int height, int x, int y, int itemHeight) {
+        super(client,width,height,y,itemHeight);
     }
     @Override
     public int getRowWidth() {
@@ -30,29 +23,13 @@ public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWi
     public int addEntry(ScrollListEntry entry){
         return super.addEntry(entry);
     }
-    //? if < 1.20.4 {
-    @Override
-    protected int getScrollbarPositionX() {
-        return width-6;
-    }
-    //?}
 
-
-    //? if < 1.20.4 {
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.enableScissor(left,top,left+width,top+height-1);
-        super.render(context, mouseX, mouseY, delta);
-        context.disableScissor();
-    }
-    //?} else {
-    /*@Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         context.enableScissor(getX(),getY(),getX()+width,getBottom());
-        super.renderWidget(context, mouseX, mouseY, delta);
+        super.extractWidgetRenderState(context, mouseX, mouseY, delta);
         context.disableScissor();
     }
-    *///?}
 
 
     public static class ScrollListEntry extends Entry<ScrollListEntry> {
@@ -63,45 +40,21 @@ public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWi
             this.key = key;
             this.event = onClick;
         }
-        //? if <= 1.21.8 {
-        @Override
-        public void render(DrawContext context,
-                           int index,
-                           int y, int x,
-                           int entryWidth,
-                           int entryHeight,
-                           int mouseX, int mouseY,
-                           boolean hovered,
-                           float delta) {
-            //?} else {
-        /*public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             var x = this.getX();
             var y = this.getY();
             var entryHeight = this.getContentHeight();
 
-            *///?}
             TextureWidget.render(context,key,x,y,entryHeight,entryHeight);
-            context.drawText(MinecraftClient.getInstance().textRenderer,key.toString(),x+entryHeight+5,y+entryHeight/2-5,0xFFFFFFFF,true);
+            context.text(Minecraft.getInstance().font,key.toString(),x+entryHeight+5,y+entryHeight/2-5,0xFFFFFFFF,true);
         }
 
         @Override
-        public Text getNarration() {
-            return Text.literal(key.toString());
+        public Component getNarration() {
+            return Component.literal(key.toString());
         }
-
-        //? if <= 1.21.8 {
-        @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            var b = super.mouseClicked(mouseX, mouseY, button);
-            if(isMouseOver(mouseX, mouseY)){
-                event.run();
-                return true;
-            }
-            else return b;
-        }
-        //?} else {
-            /*@Override
-            public boolean mouseClicked(Click click, boolean doubled) {
+            @Override
+            public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
                 var b = super.mouseClicked(click,doubled);
                 if(isMouseOver(click.x(),click.y())){
                     event.run();
@@ -109,6 +62,5 @@ public class ScrollListWidget extends AlwaysSelectedEntryListWidget<ScrollListWi
                 }
                 else return b;
             }
-        *///?}
     }
 }

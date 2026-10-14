@@ -1,73 +1,111 @@
 package io.github.jumperonjava.customcursor;
 
-import io.github.jumperonjava.customcursor.util.VersionFunctions;
-import net.minecraft.client.MinecraftClient;
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.Minecraft;
 //? if >= 1.21.6 {
-/*import net.minecraft.client.gl.RenderPipelines;
-*///?} else {
-import net.minecraft.client.render.RenderLayer;
+//?} else {
+/*import net.minecraft.client.renderer.rendertype.RenderType;
 import com.mojang.blaze3d.systems.RenderSystem;
-//?}
-import net.minecraft.client.gui.DrawContext;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
+*///?}
+import net.minecraft.resources.Identifier;
+import org.lwjgl.BufferUtils;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class CursorRenderer {
-    public static void render(DrawContext context, double mouseX, double mouseY, float donotuse_delta) {
-        var config = CustomCursorInit.getConfig().settings;
-        if (MinecraftClient.getInstance().currentScreen == null)
-            return;
-        if (!config.enabled) {
-            GLFW.glfwSetInputMode(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
-            return;
+    public static RenderedCursorBuffer renderState(int size, float x, float y, float rotation, boolean mirroredX, boolean mirroredY, Identifier identifier) {
+        var initialNative = getNativeImage(identifier);
+        var awtImage = new BufferedImage(initialNative.getWidth(),initialNative.getWidth(), BufferedImage.TYPE_INT_ARGB);
+        awtImage.setRGB(0,0,initialNative.getWidth(),initialNative.getHeight(), initialNative.getPixels(), 0, initialNative.getWidth());
+        var transformed = transform(awtImage, size, rotation,mirroredX,mirroredY,ScalingMode.NEAREST_NEIGHBOR);
+        var pixels = transformed.getRGB(0,0,size,size, null,0,size);
+        var buffer = argb2rgbaBuf(pixels);
+        return new RenderedCursorBuffer(buffer, size, (int)(x*size), (int)(y*size));
+    }
+
+    public static BufferedImage transform(BufferedImage original, int size,
+                                          double rotation, boolean mirroredX, boolean mirroredY,
+                                          ScalingMode scalingMode) {
+
+        BufferedImage output = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = output.createGraphics();
+
+        switch (scalingMode) {
+            case NEAREST_NEIGHBOR:
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                break;
+            case BILINEAR:
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                break;
+            case BICUBIC:
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                break;
         }
-        var scale = MinecraftClient.getInstance().getWindow().getScaleFactor();
-        //? if < 1.21.5
-        RenderSystem.depthFunc(GL11.GL_ALWAYS);
 
-        var sprite = config.arrow;
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        //? if > 1.21.8 {
-        /*var contextCursor = context.cursor;
-        sprite = config.cursorToSprite(contextCursor);
-        *///?}
+        AffineTransform transform = new AffineTransform();
 
-        var identifier = sprite.identifier;
+        double c = size / 2.0;
+
+        transform.translate(c, c);
+        transform.rotate(Math.toRadians(rotation));
+
+        double scaleXRatio = (double) size / original.getWidth();
+        double scaleYRatio = (double) size / original.getHeight();
+        transform.scale(scaleXRatio * (mirroredX ? -1 : 1), scaleYRatio * (mirroredY ? -1 : 1));
+
+        transform.translate(-original.getWidth() / 2.0, -original.getHeight() / 2.0);
+
+        g2d.drawImage(original, transform, null);
+        g2d.dispose();
+
+        return output;
+    }
+
+    public enum ScalingMode {
+        NEAREST_NEIGHBOR, BILINEAR, BICUBIC
+    }
+
+    private static NativeImage getNativeImage(Identifier identifier){
+        try {
+            return NativeImage.read(Minecraft.getInstance().getResourceManager().open(identifier));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static ByteBuffer argb2rgbaBuf(int[] pixels) {
+        ByteBuffer buffer = BufferUtils.createByteBuffer(pixels.length * 4);
+
+        for (int pixel : pixels) {
+            byte a = (byte) ((pixel >> 24) & 0xFF);
+            byte r = (byte) ((pixel >> 16) & 0xFF);
+            byte g = (byte) ((pixel >> 8) & 0xFF);
+            byte b = (byte) (pixel & 0xFF);
+
+            buffer.put(r);
+            buffer.put(g);
+            buffer.put(b);
+            buffer.put(a);
+        }
+
+        buffer.flip();
+        return buffer;
+    }
 
 
-        mouseX = (float) MinecraftClient.getInstance().mouse.getX();
-        mouseY = (float) MinecraftClient.getInstance().mouse.getY();
-        var x = (int) Math.round(mouseX - config.size * sprite.x);
-        var y = (int) Math.round(mouseY - config.size * sprite.y);
-        var u = (float) 0;
-        var v = (float) 0;
-        var width = config.size;
-        var height = config.size;
-        var textureWidth = config.size;
-        var textureHeight = config.size;
-
-        VersionFunctions.pushMatrix(context);
-        //? if < 1.21.6 {
-        context.getMatrices().scale((float) (1f/scale), (float) (1f/scale),1f);
-        //?} else {
-        /*context.getMatrices().scale((float) (1f/scale), (float) (1f/scale));
-        *///?}
-        VersionFunctions.rotateAbout(context, (float) Math.toRadians(sprite.rotation), x+ (float) textureWidth /2f, y+ (float) textureHeight /2f);
-        //? if < 1.21.3 {
-        context.drawTexture(identifier,x,y,u,v,width,height,textureWidth * (sprite.mirroredX ? -1:1), textureHeight* (sprite.mirroredY ? -1:1));
-         //?} else if < 1.21.6 {
-        /*context.drawTexture(RenderLayer::getGuiTexturedOverlay, identifier, x, y, u, v, width, height, textureWidth * (sprite.mirroredX ? -1:1), textureHeight* (sprite.mirroredY ? -1:1));
-        *///?} else {
-        /*context.drawTexture(RenderPipelines.GUI_TEXTURED, identifier, x, y, u, v, width, height, textureWidth * (sprite.mirroredX ? -1:1), textureHeight* (sprite.mirroredY ? -1:1));
-        *///?}
-
-        VersionFunctions.popMatrix(context);
-        //? if < 1.21.5
-        RenderSystem.depthFunc(GL11.GL_LEQUAL);
-
-        //for debugging
-        //context.drawTexture(new Identifier("customcursor","textures/gui/pointer.png"), (int) (mouseX-4), (int) (mouseY-4),0,0,8,8,8,8);
-        GLFW.glfwSetInputMode(MinecraftClient.getInstance().getWindow().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_HIDDEN);
+    public record RenderedCursorBuffer(
+        ByteBuffer pixels,
+        int size,
+        int x,
+        int y
+    ){
 
     }
 }

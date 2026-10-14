@@ -1,12 +1,13 @@
 package io.github.jumperonjava.customcursor.editor;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import io.github.jumperonjava.customcursor.util.VF;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class FolderTextureAskList extends Screen {
 
     ScrollListWidget list;
 
-    protected Identifier EMPTY_TEXTURE = Identifier.of("minecraft", "empty");
+    protected Identifier EMPTY_TEXTURE = Identifier.fromNamespaceAndPath("minecraft", "empty");
     private List<Identifier> textures = new ArrayList<>();
 
     private Identifier selectedTexture = EMPTY_TEXTURE;
@@ -29,55 +30,55 @@ public class FolderTextureAskList extends Screen {
     private String lastFilter = "";
 
     public FolderTextureAskList(TextureFolder folder, Consumer<Identifier> onSuccess) {
-        super(Text.empty());
+        super(Component.empty());
         this.onSuccess = onSuccess;
         this.folder = folder;
     }
 
     public static void ask(FolderTextureAskList askScreen) {
-        var client = MinecraftClient.getInstance();
-        var currentScreen = client.currentScreen;
+        var client = Minecraft.getInstance();
+        var currentScreen = VF.getScreen();
         if (currentScreen == null) {
-            client.setScreen(askScreen);
+            VF.setScreen(askScreen);
             return;
         }
-        client.setScreen(askScreen);
+        VF.setScreen(askScreen);
         askScreen.parent = currentScreen;
     }
     @Override
     protected void init() {
         // Initializations
-        list = new ScrollListWidget(client, width, height - 64, 0, 22, 40);
-        var search = new TextFieldWidget(client.textRenderer, 0, 0, width, 20, Text.empty());
-        var accept = new ButtonWidget.Builder(Text.translatable("customcursor.folder.accept"), b1 -> {
+        list = new ScrollListWidget(minecraft, width, height - 64, 0, 22, 40);
+        var search = new EditBox(minecraft.font, 0, 0, width, 20, Component.empty());
+        var accept = new Button.Builder(Component.translatable("customcursor.folder.accept"), b1 -> {
             if (selectedTexture != EMPTY_TEXTURE)
                 success(selectedTexture);
         });
-        var cancel1 = new ButtonWidget.Builder(Text.translatable("customcursor.folder.cancel"), b1 -> closeScreen());
-        var cancel = new ButtonWidget.Builder(Text.translatable("customcursor.folder.openfolder"), b -> openCursorFolder());
+        var cancel1 = new Button.Builder(Component.translatable("customcursor.folder.cancel"), b1 -> closeScreen());
+        var cancel = new Button.Builder(Component.translatable("customcursor.folder.openfolder"), b -> openCursorFolder());
 
-        accept.dimensions(40 + gap, height - 20 - gap, 100, 20);
-        cancel1.dimensions((int) (140 + gap * 1.5), height - 20 - gap, 100, 20);
-        cancel.dimensions(240 + gap * 2, height - 20 - gap, 100, 20);
+        accept.bounds(40 + gap, height - 20 - gap, 100, 20);
+        cancel1.bounds((int) (140 + gap * 1.5), height - 20 - gap, 100, 20);
+        cancel.bounds(240 + gap * 2, height - 20 - gap, 100, 20);
 
         // Adding Widgets
         refreshListByFilter("");
-        addDrawableChild(list);
-        search.setChangedListener(this::refreshListByFilter);
-        addDrawableChild(search);
-        addDrawableChild(accept.build());
-        addDrawableChild(cancel1.build());
-        addDrawableChild(cancel.build());
-        addDrawable(((context, mouseX, mouseY, delta) ->
+        addRenderableWidget(list);
+        search.setResponder(this::refreshListByFilter);
+        addRenderableWidget(search);
+        addRenderableWidget(accept.build());
+        addRenderableWidget(cancel1.build());
+        addRenderableWidget(cancel.build());
+        addRenderableOnly(((context, mouseX, mouseY, delta) ->
         {
-            var texture = selectedTexture == EMPTY_TEXTURE ? Identifier.of("minecraft", "textures/item/barrier.png") : selectedTexture;
+            var texture = selectedTexture == EMPTY_TEXTURE ? Identifier.fromNamespaceAndPath("minecraft", "textures/item/barrier.png") : selectedTexture;
             TextureWidget.render(context,texture, gap / 2, height - 40 - gap / 2, 40, 40);
         }));
 
         setTexturesCallback(this::setTextures);
-        addDrawable(((context, mouseX, mouseY, delta) -> context.drawText(
-                textRenderer,
-                Text.translatable("customcursor.folder.selected").append(": ").append(selectedTexture.toString()),
+        addRenderableOnly(((context, mouseX, mouseY, delta) -> context.text(
+                font,
+                Component.translatable("customcursor.folder.selected").append(": ").append(selectedTexture.toString()),
                 45,
                 height - 30 - 6 - gap / 2,
                 0xFFFFFFFF,
@@ -86,7 +87,7 @@ public class FolderTextureAskList extends Screen {
 
 
     private void openCursorFolder() {
-        Util.getOperatingSystem().open(folder.path.toFile());
+        //Util.getPlatform()(folder.path);
     }
 
     public void setTexturesCallback(Consumer<List<Identifier>> consumer) {
@@ -106,12 +107,7 @@ public class FolderTextureAskList extends Screen {
 
     private void refreshListByFilter(String s) {
         lastFilter = s;
-        list.children.clear();
-        //? if < 1.21.4 {
-        list.setScrollAmount(0);
-         //?} else {
-        /*list.setScrollY(0);
-        *///?}
+        list.replaceEntries(List.of());
         for (var key : textures) {
             extracted(s, key);
         }
@@ -129,13 +125,11 @@ public class FolderTextureAskList extends Screen {
         list.addEntry(entry);
     }
 
-    //? if <= 1.20.1 {
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        extractBackground(context,mouseX,mouseY,delta);
+        super.extractRenderState(context, mouseX, mouseY, delta);
     }
-    //?}
 
     public void success(Identifier ret) {
         onSuccess.accept(ret);
@@ -143,6 +137,6 @@ public class FolderTextureAskList extends Screen {
     }
 
     private void closeScreen() {
-        MinecraftClient.getInstance().setScreen(this.parent);
+        VF.setScreen(this.parent);
     }
 }

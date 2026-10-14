@@ -1,21 +1,16 @@
 package io.github.jumperonjava.customcursor.editor;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.github.jumperonjava.customcursor.util.VersionFunctions;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec2f;
+import io.github.jumperonjava.customcursor.util.VF;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec2;
 
+import net.minecraft.client.renderer.RenderPipelines;
 
-//? if <= 1.21.5 {
-import com.mojang.blaze3d.systems.RenderSystem;
-//?} else {
-/*import net.minecraft.client.gl.RenderPipelines;
-*///?}
-
-class BackgroundCheckerboard implements Drawable {
+class BackgroundCheckerboard implements Renderable {
     private final CursorEditScreen cursorEditScreen;
     private final int x;
     private final int y;
@@ -31,27 +26,32 @@ class BackgroundCheckerboard implements Drawable {
     private float bgx, bgy, color;
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        render(graphics, mouseX, mouseY, a);
+    }
+
+    public void render(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         //generates slowly changing pastel colors for backround
         color += delta * 0.05f;
         var n = 2;
-        var color1 = VersionFunctions.ColorHelper.getArgb(255,
+        var color1 = VF.ARGB.color(255,
                 (int) (128 + 64 * Math.pow(Math.sin(color + 0 * Math.PI / 3), n)),
                 (int) (128 + 64 * Math.pow(Math.sin(color + 2 * Math.PI / 3), n)),
                 (int) (128 + 64 * Math.pow(Math.sin(color + 4 * Math.PI / 3), n))
         );
-        var color2 = VersionFunctions.ColorHelper.getArgb(255,
+        var color2 = VF.ARGB.color(255,
                 (int) ((192 + 63 * Math.pow(Math.cos(color + 0 * Math.PI / 3), n))),
                 (int) ((192 + 63 * Math.pow(Math.cos(color + 2 * Math.PI / 3), n))),
                 (int) ((192 + 63 * Math.pow(Math.cos(color + 4 * Math.PI / 3), n)))
         );
 
-        float r = VersionFunctions.ColorHelper.getRed(color1) / 255f;
-        float g = VersionFunctions.ColorHelper.getGreen(color1) / 255f;
-        float b = VersionFunctions.ColorHelper.getBlue(color1) / 255f;
+        float r = VF.ARGB.red(color1) / 255f;
+        float g = VF.ARGB.green(color1) / 255f;
+        float b = VF.ARGB.blue(color1) / 255f;
 
 
-        var vec = new Vec2f(mouseX - (x + size / 2f), mouseY - (y + size / 2f)).normalize().multiply(delta);
+        var vec = new Vec2(mouseX - (x + size / 2f), mouseY - (y + size / 2f)).normalized().scale(delta);
+
         bgx += vec.x;
         bgy += vec.y;
 
@@ -62,46 +62,23 @@ class BackgroundCheckerboard implements Drawable {
         var cellsize = size / 8;
 
 
-        //? if < 1.21.6 {
-
-        context.getMatrices().push();
-        context.getMatrices().translate(
-                (x + MathHelper.floorMod(bgx, cellsize) - cellsize),
-                (y + MathHelper.floorMod(bgy, cellsize) - cellsize),
-                0);
-        RenderSystem.setShaderColor(r, g, b, 255);
-
-        int checkerRenderSize = size + cellsize;
-        VersionFunctions.drawTexture(context, Identifier.of("customcursor", "textures/gui/backgroundcheckerboard.png"),
-                0,
-                0,
-                0,
-                0, checkerRenderSize, checkerRenderSize, checkerRenderSize, checkerRenderSize);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-
-        context.getMatrices().pop();
-        context.disableScissor();
-//?} else {
+        context.pose().pushMatrix();
+        context.pose().translate(
+                (x + Mth.positiveModulo(bgx, cellsize) - cellsize),
+                (y + Mth.positiveModulo(bgy, cellsize) - cellsize));
 
 
-        /*context.getMatrices().pushMatrix();
-        context.getMatrices().translate(
-                (x + MathHelper.floorMod(bgx, cellsize) - cellsize),
-                (y + MathHelper.floorMod(bgy, cellsize) - cellsize));
-
-
-        int color3 = VersionFunctions.ColorHelper.getArgb(255, (int) (r * 255), (int) (g * 255), (int) (b * 255));
+        int color3 = VF.ARGB.color(255, (int) (r * 255), (int) (g * 255), (int) (b * 255));
 
         int checkerRenderSize = size + cellsize;
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, Identifier.of("customcursor", "textures/gui/backgroundcheckerboard.png"),
+        context.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath("customcursor", "textures/gui/backgroundcheckerboard.png"),
                 0,
                 0,
                 0,
                 0, checkerRenderSize, checkerRenderSize, checkerRenderSize, checkerRenderSize, color3);
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
         context.disableScissor();
 
-        *///?}
     }
 }

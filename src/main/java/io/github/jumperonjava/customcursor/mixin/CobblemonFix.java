@@ -1,10 +1,11 @@
 package io.github.jumperonjava.customcursor.mixin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.InputUtil;
+import io.github.jumperonjava.customcursor.util.VF;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.DeltaTracker;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,31 +13,44 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public class CobblemonFix {
     @Shadow
     @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
     boolean locked = false;
 
-    @Inject(method = "render", at = @At("HEAD"))
-        //? if < 1.21 {
-        void lock(DrawContext context, float tickDelta, CallbackInfo ci){
-         //?} else {
-    /*void lock(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        *///?}
-        if (client.currentScreen == null) {
+    //? if >= 26.1 {
+    @Inject(method = "extractRenderState", at = @At("HEAD"))
+    //? } else {
+    /*@Inject(method = "render", at = @At("HEAD"))
+    *///? }
+
+    //? if >= 26.2 {
+    /*void lock(DeltaTracker deltaTracker, boolean shouldRenderLevel, boolean resourcesLoaded, CallbackInfo ci)
+    *///?} else if >= 26.1 {
+    void lock(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci)
+    //?} else if >= 1.21.10 {
+    /*void lock(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci)
+    *///?} else if >= 1.21 {
+    /*void lock(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci)
+    *///?} else {
+    /*void lock(GuiGraphicsExtractor context, float tickDelta, CallbackInfo ci)
+    *///?}
+    {
+        if (VF.getScreen() == null) {
             if (locked)
                 return;
-            client.mouse.lockCursor();
+            minecraft.mouseHandler.grabMouse();
             locked = true;
-            var x = (double) (this.client.getWindow().getWidth() / 2);
-            var y = (double) (this.client.getWindow().getHeight() / 2);
+            var x = (double) (this.minecraft.getWindow().getWidth() / 2);
+            var y = (double) (this.minecraft.getWindow().getHeight() / 2);
             //? if <= 1.21.8 {
-            InputUtil.setCursorParameters(this.client.getWindow().getHandle(), 212995, x, y);
-            //?} else {
-            /*InputUtil.setCursorParameters(this.client.getWindow(), 212995, x, y);
-            *///?}
+            /*
+            InputConstants.grabOrReleaseMouse(this.minecraft.getWindow(), 212995, x, y);
+            *///?} else {
+            //InputConstants.releaseMouse(this.minecraft.getWindow(), x, y);
+            //?}
         } else {
             locked = false;
         }

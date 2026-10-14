@@ -1,16 +1,15 @@
-//? if > 1.21.8 {
-/*package io.github.jumperonjava.customcursor.editor;
+package io.github.jumperonjava.customcursor.editor;
 
 import io.github.jumperonjava.customcursor.CursorSettings;
-import io.github.jumperonjava.customcursor.util.VersionFunctions;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.Click;
+import io.github.jumperonjava.customcursor.util.VF;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 
-public class CursorWidget implements Drawable, Element, Selectable {
+public class CursorWidget implements Renderable, GuiEventListener, NarratableEntry {
     private final String key;
     private final CursorSettings.CursorSprite sprite;
     private final int x;
@@ -28,20 +27,24 @@ public class CursorWidget implements Drawable, Element, Selectable {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        context.getMatrices().pushMatrix();
-        context.getMatrices().rotateAbout((float) Math.toRadians(sprite.rotation), x + (float) size / 2, y + (float) size / 2);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+        render(context, mouseX, mouseY, deltaTicks);
+    }
+
+    public void render(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
+        context.pose().pushMatrix();
+        context.pose().rotateAbout((float) Math.toRadians(sprite.rotation), x + (float) size / 2, y + (float) size / 2);
         if (isMouseOver(mouseX, mouseY)) {
-            context.setCursor(CursorSettings.cursors().get(key));
+            context.requestCursor(CursorSettings.cursors().get(key));
             context.fill(x,y,x+size,y+size, 0x7f000000);
         }
-        VersionFunctions.drawTexture(context, sprite.identifier, x, y, 0, 0, size, size, size * (sprite.mirroredX ? -1 : 1), size * (sprite.mirroredY ? -1 : 1));
-        context.getMatrices().popMatrix();
+        VF.blit(context, sprite.identifier, x, y, 0, 0, size, size, size * (sprite.mirroredX ? -1 : 1), size * (sprite.mirroredY ? -1 : 1));
+        context.pose().popMatrix();
 
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (isMouseOver(click.x(), click.y())) {
             callback.run();
             return true;
@@ -73,13 +76,12 @@ public class CursorWidget implements Drawable, Element, Selectable {
     }
 
     @Override
-    public SelectionType getType() {
-        return SelectionType.FOCUSED;
+    public NarrationPriority narrationPriority() {
+        return NarrationPriority.NONE;
     }
 
     @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
+    public void updateNarration(NarrationElementOutput output) {
 
     }
 }
-*///?}

@@ -1,14 +1,11 @@
 package io.github.jumperonjava.customcursor.editor;
 
 
-//? if <= 1.21.5 {
-import com.mojang.blaze3d.systems.RenderSystem;
-//?}
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.InvalidIdentifierException;
+import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.resources.Identifier;
+import net.minecraft.IdentifierException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -70,18 +67,12 @@ public class TextureFolder {
     }
 
     private void reregisterTextures(Runnable onFinishedCallback, List<Path> toRegister) {
-        // Move the RenderSystem.recordRenderCall out of the forEach loop
-
-        //? if < 1.21.5
-        RenderSystem.recordRenderCall(() -> {
-            ONLY_RENDERTHREAD_register(onFinishedCallback, toRegister);
-        //? if < 1.21.5
-        });
+        ONLY_RENDERTHREAD_register(onFinishedCallback, toRegister);
     }
 
     private void ONLY_RENDERTHREAD_register(Runnable onFinishedCallback, List<Path> toRegister) {
-        var tman = MinecraftClient.getInstance().getTextureManager();
-        textures.forEach(tman::destroyTexture);
+        var tman = Minecraft.getInstance().getTextureManager();
+        textures.forEach(tman::release);
         textures.clear();
         Map<Identifier, NativeImage> textureMap = new HashMap<>();
 
@@ -97,12 +88,8 @@ public class TextureFolder {
             }
         });
         textureMap.forEach((identifier, nativeImage) -> {
-            //? if < 1.21.5 {
-            var texture = new NativeImageBackedTexture(nativeImage);
-            //?} else {
-            /*var texture = new NativeImageBackedTexture(identifier::toString,nativeImage);
-            *///?}
-            tman.registerTexture(identifier, texture);
+            var texture = new DynamicTexture(identifier::toString,nativeImage);
+            tman.register(identifier, texture);
             textures.add(identifier);
         });
 
@@ -115,12 +102,12 @@ public class TextureFolder {
         //in some it just sends null, so we throw an exception manually
         var s = p.toAbsolutePath().toString().replaceAll(Pattern.quote(path.toAbsolutePath().toString()),"").replace("\\","/").toLowerCase().substring(1);
         try{
-            var name =  Identifier.of(namespace,s);
+            var name =  Identifier.fromNamespaceAndPath(namespace,s);
             if(name != null) return name;
-            else throw new InvalidIdentifierException(namespace+":"+s);
+            else throw new IdentifierException(namespace+":"+s);
         }
-        catch (InvalidIdentifierException e){
-            return Identifier.of(namespace,"wrongfilename" + s.hashCode());
+        catch (IdentifierException e){
+            return Identifier.fromNamespaceAndPath(namespace,"wrongfilename" + s.hashCode());
         }
     }
 

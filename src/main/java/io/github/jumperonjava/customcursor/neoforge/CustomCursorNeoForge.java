@@ -3,8 +3,8 @@
 
 import io.github.jumperonjava.customcursor.editor.CursorEditScreen;
 import io.github.jumperonjava.customcursor.CustomCursorInit;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;

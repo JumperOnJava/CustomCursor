@@ -1,14 +1,18 @@
 package io.github.jumperonjava.customcursor.editor;
 
 import io.github.jumperonjava.customcursor.CursorSettings;
-import io.github.jumperonjava.customcursor.util.VersionFunctions;
+import io.github.jumperonjava.customcursor.util.VF;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.BiConsumer;
 
-public class PreviewWidget implements Drawable, Element, Selectable {
+public class PreviewWidget implements Renderable, GuiEventListener, NarratableEntry {
     private final String key;
     private final int x;
     private final int y;
@@ -34,7 +38,7 @@ public class PreviewWidget implements Drawable, Element, Selectable {
     }
 
     //? if <= 1.21.8 {
-    @Override
+    /*@Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         return update(mouseX, mouseY);
     }
@@ -43,28 +47,30 @@ public class PreviewWidget implements Drawable, Element, Selectable {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return update(mouseX, mouseY);
     }
-    //?} else {
-    /*@Override
-    public boolean mouseDragged(Click click, double xdelta, double ydelta) {
+    *///?} else {
+    @Override
+    public boolean mouseDragged(MouseButtonEvent click, double xdelta, double ydelta) {
         return update(click.x(), click.y());
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         return update(click.x(), click.y());
     }
-    *///?}
+    //?}
 
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta){
+        render(context, mouseX, mouseY, delta);
+    }
 
-        VersionFunctions.pushMatrix(context);
-        VersionFunctions.rotateAbout(context,(float) Math.toRadians(sprite.rotation), x + (float) size / 2, y + (float) size / 2);
-        VersionFunctions.drawTexture(context, sprite.identifier, x, y, 0, 0, size, size, size * (sprite.mirroredX ? -1 : 1), size * (sprite.mirroredY ? -1 : 1));
-        VersionFunctions.popMatrix(context);
-        VersionFunctions.drawTexture(
+    public void render(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        VF.pushMatrix(context);
+        VF.rotateAbout(context,(float) Math.toRadians(sprite.rotation), x + (float) size / 2, y + (float) size / 2);
+        VF.blit(context, sprite.identifier, x, y, 0, 0, size, size, size * (sprite.mirroredX ? -1 : 1), size * (sprite.mirroredY ? -1 : 1));
+        VF.popMatrix(context);
+        VF.blit(
                 context,
-                Identifier.of("customcursor", "textures/gui/pointer.png"),
+                Identifier.fromNamespaceAndPath("customcursor", "textures/gui/pointer.png"),
                 (int) (x + this.sprite.x * size) - 4,
                 (int) (y + this.sprite.y * size) - 4,
                 0, 0,
@@ -91,20 +97,20 @@ public class PreviewWidget implements Drawable, Element, Selectable {
 
     @Override
     public boolean isFocused() {
-        return focused;
-    }
-
-    @Override
-    public SelectionType getType() {
-        return SelectionType.FOCUSED;
-    }
-
-    @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
-
+            return focused;
     }
 
     public void setSprite(CursorSettings.CursorSprite value) {
         this.sprite = value;
+    }
+
+    @Override
+    public NarrationPriority narrationPriority() {
+        return NarrationPriority.NONE;
+    }
+
+    @Override
+    public void updateNarration(NarrationElementOutput output) {
+
     }
 }
