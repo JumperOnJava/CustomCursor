@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class LoadFolderTexturesEventMixin {
     @Inject(method = "init",at=@At("HEAD"))
     void init(CallbackInfo ci){
+        CustomCursorInit.backupVanillaHandles();
         CustomCursorInit.getTextureFolder().redefineTextures();
         CustomCursorInit.updateCursors();
     }

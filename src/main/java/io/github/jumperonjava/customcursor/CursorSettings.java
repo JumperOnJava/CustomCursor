@@ -4,6 +4,7 @@ package io.github.jumperonjava.customcursor;
 import com.google.gson.Gson;
 import com.mojang.blaze3d.platform.cursor.CursorType;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
@@ -14,17 +15,16 @@ public class CursorSettings implements Cloneable {
     public static CursorType globalCursor;
 
     public boolean enabled = false;
-    public boolean dynamicEnabled = true;
 
     public final CursorSprite arrow = new CursorSprite(0.0625f, 0.0625f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/arrow.png"));
     public final CursorSprite ibeam = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/ibeam.png"));
     public final CursorSprite crosshair = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/crosshair.png"));
-    public final CursorSprite pointing_hand = new CursorSprite(0.375f, 32, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/pointing_hand.png"));
+    public final CursorSprite pointing_hand = new CursorSprite(0.375f, 0.0625f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/pointing_hand.png"));
     public final CursorSprite resize_ns = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/resize_ns.png"));
     public final CursorSprite resize_ew = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/resize_ew.png"));
     public final CursorSprite resize_all = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("customcursor", "cursors/resize_all.png"));
     public final CursorSprite not_allowed = new CursorSprite(0.5f, 0.5f, 0, false, false, Identifier.fromNamespaceAndPath("minecraft", "textures/item/barrier.png"));
-    public int size;
+    public int size=16;
 
     public Map<String, CursorSprite> allCursors() {
         return Map.of(
@@ -64,9 +64,9 @@ public class CursorSettings implements Cloneable {
     );
 
     public CursorSprite cursorToSprite(CursorType cursor) {
-        if (!this.dynamicEnabled) {
-            return this.arrow;
-        }
+//        if (!this.isDynamicEnabled()) {
+//            return this.arrow;
+//        }
         if (cursor == CursorTypes.ARROW) return arrow;
         if (cursor == CursorTypes.IBEAM) return ibeam;
         if (cursor == CursorTypes.CROSSHAIR) return crosshair;
@@ -80,6 +80,14 @@ public class CursorSettings implements Cloneable {
 
     public CursorSettings clone() {
         return new Gson().fromJson(new Gson().toJson(this), CursorSettings.class);
+    }
+
+    public boolean isDynamicEnabled() {
+        return Minecraft.getInstance().options.allowCursorChanges().get();
+    }
+
+    public void setDynamicEnabled(boolean dynamicEnabled) {
+        Minecraft.getInstance().options.allowCursorChanges().set(dynamicEnabled);
     }
 
 

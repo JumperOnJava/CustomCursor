@@ -1,11 +1,13 @@
 package io.github.jumperonjava.customcursor.editor;
 
+import com.mojang.blaze3d.Blaze3D;
 import io.github.jumperonjava.customcursor.util.VF;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -87,7 +89,11 @@ public class FolderTextureAskList extends Screen {
 
 
     private void openCursorFolder() {
-        //Util.getPlatform()(folder.path);
+        //? if >= 26.3 {
+        /*Blaze3D.openPath(folder.path);
+        *///?} else {
+        Util.getPlatform().openPath(folder.path);
+        //?}
     }
 
     public void setTexturesCallback(Consumer<List<Identifier>> consumer) {
@@ -127,7 +133,6 @@ public class FolderTextureAskList extends Screen {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
-        extractBackground(context,mouseX,mouseY,delta);
         super.extractRenderState(context, mouseX, mouseY, delta);
     }
 

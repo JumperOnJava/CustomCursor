@@ -10,6 +10,7 @@ displayName = "${name}"
 authors = "JavaJumper"
 description = ""
 logoFile = "assets/customcursor/icon.png"
+iconFile = "assets/customcursor/icon.png"
 logoBlur = false
 
 [[mixins]]

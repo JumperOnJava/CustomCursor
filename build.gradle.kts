@@ -46,10 +46,11 @@ when (platform) {
 // -----------------------------------------------------------------------------
 // Loader Specific Logic
 // -----------------------------------------------------------------------------
+val ctVersion = (findProperty("mod.ct_version") as String?) ?: "fallback"
+
 when (platform) {
     "fabric" -> {
         configure<LoomGradleExtensionAPI> {
-            val ctVersion = (findProperty("mod.ct_version") as String?) ?: "fallback"
             accessWidenerPath.set(rootProject.file("src/main/resources/ct/customcursor.${ctVersion}.classtweaker"))
 
             decompilers {
@@ -208,7 +209,8 @@ tasks.processResources {
                 "id" to mod.id,
                 "name" to mod.name,
                 "version" to mod.version,
-                "minecraft" to mod.prop("mc_dep_fabric")
+                "minecraft" to mod.prop("mc_dep_fabric"),
+                "classtweaker" to "ct/customcursor.${ctVersion}.classtweaker"
             )
 //        }
 //        "neoforge" -> {

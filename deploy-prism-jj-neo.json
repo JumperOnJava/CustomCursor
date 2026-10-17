@@ -1,0 +1,43 @@
+{
+  "project_dir": ".",
+  "source_dir": "build/libs",
+  "instances_dir": "~/Library/Application Support/PrismLauncher/instances",
+  "instance_game_subdir": "minecraft",
+  "mods_subdir": "mods",
+  "include": [
+    "*.jar"
+  ],
+  "exclude": [
+    "*-sources.jar",
+    "*-dev-shadow.jar"
+  ],
+  "clean": [
+    "customcursor-*"
+  ],
+  "mappings": [
+    {
+      "src": "26.1-fabric",
+      "instance": "26.1.2(1)"
+    },
+    {
+      "src": "26.1-neoforge",
+      "instance": "26.1.2"
+    },
+    {
+      "src": "26.2-fabric",
+      "instance": "26.2(1)"
+    },
+    {
+      "src": "26.2-neoforge",
+      "instance": "26.2"
+    },
+    {
+      "src": "26.3-fabric",
+      "instance": "26.3"
+    },
+    {
+      "src": "26.3-neoforge",
+      "instance": "26.3(1)"
+    }
+  ]
+}

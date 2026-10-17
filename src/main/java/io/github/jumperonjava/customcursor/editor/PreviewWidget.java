@@ -37,17 +37,6 @@ public class PreviewWidget implements Renderable, GuiEventListener, NarratableEn
         return false;
     }
 
-    //? if <= 1.21.8 {
-    /*@Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        return update(mouseX, mouseY);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return update(mouseX, mouseY);
-    }
-    *///?} else {
     @Override
     public boolean mouseDragged(MouseButtonEvent click, double xdelta, double ydelta) {
         return update(click.x(), click.y());
@@ -57,7 +46,6 @@ public class PreviewWidget implements Renderable, GuiEventListener, NarratableEn
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         return update(click.x(), click.y());
     }
-    //?}
 
     public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta){
         render(context, mouseX, mouseY, delta);

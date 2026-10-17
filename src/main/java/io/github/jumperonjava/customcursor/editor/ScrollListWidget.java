@@ -1,9 +1,7 @@
 package io.github.jumperonjava.customcursor.editor;
 
 import net.minecraft.client.Minecraft;
-//? if > 1.21.8 {
 import net.minecraft.client.input.MouseButtonEvent;
-//?}
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;

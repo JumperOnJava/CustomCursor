@@ -2,11 +2,6 @@ package io.github.jumperonjava.customcursor;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
-//? if >= 1.21.6 {
-//?} else {
-/*import net.minecraft.client.renderer.rendertype.RenderType;
-import com.mojang.blaze3d.systems.RenderSystem;
-*///?}
 import net.minecraft.resources.Identifier;
 import org.lwjgl.BufferUtils;
 
@@ -15,6 +10,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 
 public class CursorRenderer {
     public static RenderedCursorBuffer renderState(int size, float x, float y, float rotation, boolean mirroredX, boolean mirroredY, Identifier identifier) {
@@ -74,10 +71,21 @@ public class CursorRenderer {
 
     private static NativeImage getNativeImage(Identifier identifier){
         try {
+            if(identifier.getNamespace().equals("cursorfolder")){
+                return specialcase_cursorfolder(identifier.getPath());
+            }
             return NativeImage.read(Minecraft.getInstance().getResourceManager().open(identifier));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            try{
+                return NativeImage.read(Minecraft.getInstance().getResourceManager().open(identifier));
+            } catch (IOException e2){
+                throw new RuntimeException(e2);
+            }
         }
+    }
+
+    private static NativeImage specialcase_cursorfolder(String filename) throws IOException {
+        return NativeImage.read(Files.newInputStream(CustomCursorInit.getTextureFolder().path.resolve(filename), StandardOpenOption.READ));
     }
 
     private static ByteBuffer argb2rgbaBuf(int[] pixels) {

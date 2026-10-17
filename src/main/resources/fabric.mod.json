@@ -12,6 +12,7 @@
   "license": "LGPLv3",
   "icon": "assets/${id}/icon.png",
   "environment": "*",
+  "accessWidener": "${classtweaker}",
   "entrypoints": {
     "main": [
       "io.github.jumperonjava.customcursor.fabric.CustomCursorFabric"
@@ -25,7 +26,7 @@
     "customcursor-fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.15",
+    "fabricloader": ">=0.18",
     "minecraft": "${minecraft}"
   }
 }

@@ -54,12 +54,12 @@ public class CursorEditScreen extends Screen {
         });
 
         Function<Boolean, Component> dynamicText = (Boolean b) -> Component.translatable("customcursor.edit.dynamic." + b);
-        var dynmicWidget = new Button.Builder(dynamicText.apply(this.targetConfig.dynamicEnabled), (buttonWidget) -> {
-            this.targetConfig.dynamicEnabled = !targetConfig.dynamicEnabled;
-            if (!targetConfig.dynamicEnabled) {
+        var dynmicWidget = new Button.Builder(dynamicText.apply(this.targetConfig.isDynamicEnabled()), (buttonWidget) -> {
+            this.targetConfig.setDynamicEnabled(!targetConfig.isDynamicEnabled());
+            if (!targetConfig.isDynamicEnabled()) {
                 targetCursor = targetConfig.arrow;
             }
-            buttonWidget.setMessage(dynamicText.apply(this.targetConfig.dynamicEnabled));
+            buttonWidget.setMessage(dynamicText.apply(this.targetConfig.isDynamicEnabled()));
         });
 
         var save__Button = new Button.Builder(Component.translatable("customcursor.edit.save"), this::save);
@@ -112,7 +112,7 @@ public class CursorEditScreen extends Screen {
 
         var maxsize = 256.;
         var imagePathField = new EditBox(minecraft.font, columns[0], rows[2], twoColumnSizePadding - rowSize, rowSizePadding, Component.empty());
-        var sizeSlider = new SliderWidget(columns[0], rows[1], twoColumnSizePadding, rowSizePadding, Component.translatable("customcursor.edit.size"), this.targetConfig.size, 0, maxsize, 256);
+        var sizeSlider = new SliderWidget(columns[0], rows[1], twoColumnSizePadding, rowSizePadding, Component.translatable("customcursor.edit.size"), this.targetConfig.size, 8, maxsize, 256-8);
         var xPosSlider = new SliderWidget(columns[0], rows[2], columnSizePadding, rowSizePadding, Component.translatable("customcursor.edit.x"), this.targetCursor.x, 0., 1., 64);
         var yPosSlider = new SliderWidget(columns[1], rows[2], columnSizePadding, rowSizePadding, Component.translatable("customcursor.edit.y"), this.targetCursor.y, 0., 1., 64);
 
@@ -168,7 +168,7 @@ public class CursorEditScreen extends Screen {
             }) {
                 @Override
                 public void render(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
-                    if (!targetConfig.dynamicEnabled) {
+                    if (!targetConfig.isDynamicEnabled()) {
                         return;
                     }
                     super.render(context, mouseX, mouseY, deltaTicks);
@@ -176,7 +176,7 @@ public class CursorEditScreen extends Screen {
 
                 @Override
                 public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-                    if (!targetConfig.dynamicEnabled) {
+                    if (!targetConfig.isDynamicEnabled()) {
                         return false;
                     }
                     return super.mouseClicked(click, doubled);
@@ -185,7 +185,7 @@ public class CursorEditScreen extends Screen {
             });
 
             addRenderableOnly((ctx, x, y, td) -> {
-                if (!targetConfig.dynamicEnabled) {
+                if (!targetConfig.isDynamicEnabled()) {
                     return;
                 }
                 var text = Component.translatable("customcursor.cursortype." + key);
@@ -250,7 +250,7 @@ public class CursorEditScreen extends Screen {
     }
 
     private void dynamic(Button buttonWidget) {
-        targetConfig.dynamicEnabled = !targetConfig.dynamicEnabled;
+        targetConfig.setDynamicEnabled(!targetConfig.isDynamicEnabled());
     }
 
 
