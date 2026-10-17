@@ -274,6 +274,8 @@ publishMods {
             requires("fabric-api")
             optional("modmenu")
         }
+        client = true
+        server = false
     }
 }
 
