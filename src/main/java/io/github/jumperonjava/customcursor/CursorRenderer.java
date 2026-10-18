@@ -1,6 +1,7 @@
 package io.github.jumperonjava.customcursor;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import io.github.jumperonjava.customcursor.editor.TextureFolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.BufferUtils;
@@ -11,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 public class CursorRenderer {
@@ -69,23 +71,26 @@ public class CursorRenderer {
         NEAREST_NEIGHBOR, BILINEAR, BICUBIC
     }
 
-    private static NativeImage getNativeImage(Identifier identifier){
-        try {
-            if(identifier.getNamespace().equals("cursorfolder")){
-                return specialcase_cursorfolder(identifier.getPath());
+    private static NativeImage getNativeImage(Identifier identifier) {
+        if (identifier.getNamespace().equals("cursorfolder")) {
+            try {
+                var path = TextureFolder.cursorIdToPath.get(identifier);
+                if(path != null){
+                    return specialcase_cursorfolder(path);
+                }
+            } catch (IOException _) {
             }
-            return NativeImage.read(Minecraft.getInstance().getResourceManager().open(identifier));
+        }
+
+        try (var stream = Minecraft.getInstance().getResourceManager().open(identifier)) {
+            return NativeImage.read(stream);
         } catch (IOException e) {
-            try{
-                return NativeImage.read(Minecraft.getInstance().getResourceManager().open(identifier));
-            } catch (IOException e2){
-                throw new RuntimeException(e2);
-            }
+            throw new RuntimeException("Failed to load cursor: " + identifier, e);
         }
     }
 
-    private static NativeImage specialcase_cursorfolder(String filename) throws IOException {
-        return NativeImage.read(Files.newInputStream(CustomCursorInit.getTextureFolder().path.resolve(filename), StandardOpenOption.READ));
+    private static NativeImage specialcase_cursorfolder(Path filepath) throws IOException {
+        return NativeImage.read(Files.newInputStream(filepath, StandardOpenOption.READ));
     }
 
     private static ByteBuffer argb2rgbaBuf(int[] pixels) {

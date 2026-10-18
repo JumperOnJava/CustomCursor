@@ -28,9 +28,6 @@ public class WindowingBackend {
             assert sdlSurface != null;
             sdlSurface.pixels(rendered.pixels());
             var cursorHandle = SDLMouse.SDL_CreateColorCursor(sdlSurface, rendered.x(), rendered.y());
-            if(cursorHandle == 0){
-                throw new RuntimeException("[Customcursor] SDL cursor handle is 0");
-            }
             return cursorHandle;
         }
     };

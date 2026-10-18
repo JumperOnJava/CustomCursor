@@ -75,7 +75,12 @@ public class CustomCursorInit {
             if(config.settings.enabled){
                 var sprite = config.settings.cursorToSprite(cursorType);
                 var rendered = CursorRenderer.renderState(config.settings.size,sprite.x,sprite.y,sprite.rotation,sprite.mirroredX,sprite.mirroredY,sprite.identifier);
-                cursorType.handle = WindowingBackend.INSTANCE.getCursorHandle(rendered);
+                var handle = WindowingBackend.INSTANCE.getCursorHandle(rendered);
+                cursorType.handle = handle;
+                if(handle == 0){
+                    LOGGER.warn("Cursortype {} handle is 0",cursorType.toString());
+                    cursorType.handle = vanillaHandles.get(cursorType);
+                }
             } else{
                 cursorType.handle = vanillaHandles.get(cursorType);
             }

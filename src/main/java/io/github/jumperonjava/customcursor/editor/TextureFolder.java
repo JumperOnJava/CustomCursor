@@ -83,6 +83,7 @@ public class TextureFolder {
                 stream.close();
                 var name = getIdentifierFor(p);
                 textureMap.put(name, nativeImage);
+                cursorIdToPath.put(name,p);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -95,6 +96,8 @@ public class TextureFolder {
 
         onFinishedCallback.run();
     }
+
+    public static final HashMap<Identifier, Path> cursorIdToPath = new HashMap<>();
 
     private Identifier getIdentifierFor(Path p) {
 
